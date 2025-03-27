@@ -10,13 +10,32 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
+      # Step 1: Checkout the code
       - uses: actions/checkout@v4
+
+      # Step 2: Install dependencies
       - run: npm ci
+
+      # Step 3: Inject environment variables into the environment.prod.ts
+      - name: Replace environment variables in environment.prod.ts
+        run: |
+          # Ensure the environment variables are replaced dynamically
+          sed -i 's|{{FIREBASE_API_KEY}}|'"${{ secrets.FIREBASE_API_KEY }}"'|g' src/environments/environment.prod.ts
+          sed -i 's|{{FIREBASE_AUTH_DOMAIN}}|'"${{ secrets.FIREBASE_AUTH_DOMAIN }}"'|g' src/environments/environment.prod.ts
+          sed -i 's|{{FIREBASE_PROJECT_ID}}|'"${{ secrets.FIREBASE_PROJECT_ID }}"'|g' src/environments/environment.prod.ts
+          sed -i 's|{{FIREBASE_STORAGE_BUCKET}}|'"${{ secrets.FIREBASE_STORAGE_BUCKET }}"'|g' src/environments/environment.prod.ts
+          sed -i 's|{{FIREBASE_MESSAGING_SENDER_ID}}|'"${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}"'|g' src/environments/environment.prod.ts
+          sed -i 's|{{FIREBASE_APP_ID}}|'"${{ secrets.FIREBASE_APP_ID }}"'|g' src/environments/environment.prod.ts
+          sed -i 's|{{FIREBASE_MEASUREMENT_ID}}|'"${{ secrets.FIREBASE_MEASUREMENT_ID }}"'|g' src/environments/environment.prod.ts
+
+      # Step 4: Build the Angular app for production
+      - run: npm run build --prod
+
+      # Step 5: Deploy to Firebase Hosting
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_THJ_DNT }}
-          channelId: live
           projectId: thj-dnt
         env:
           FIREBASE_CLI_EXPERIMENTS: webframeworks
