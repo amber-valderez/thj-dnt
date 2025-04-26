@@ -96,6 +96,7 @@ export const magicianEpicItemIds = [
     20764, // Crown of Elemental Mastery
     10614, // Spoon
     16545, // Shovel
+    16544, // Broom
 ];
 
 export const monkEpicItemIds = [
@@ -108,6 +109,7 @@ export const necromancerEpicItemIds = [
     20655, // Slime Blood of Cazic-Thule
     20656, // Eye of Innoruuk
     20654, // Manisi Herb
+    48034, // Brittle Bone
 ];
 
 export const paladinEpicItemIds = [
@@ -137,6 +139,8 @@ export const shadowknightEpicItemIds = [
     14372, // Drake Spine
     11609, // Soul Leech, Dark Sword of Blood
     5403, // Ghoulbane
+    14365, // Cough Elixir
+    3141, // Darkforge Breastplate
 
     // Epic 2.0
     23489, // Lhranc's Pendant
@@ -167,6 +171,7 @@ export const wizardEpicItemIds = [
     14338, // Gnarled Staff
     14349, // Green Oil
     14319, // Golem Sprocket
+    14335, // Arantir's Ring
 
 ];
 
