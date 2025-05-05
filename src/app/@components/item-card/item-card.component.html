@@ -1,0 +1,293 @@
+<ng-container *ngIf="isSimpleMode; else detailedMode">
+    <table>
+        <colgroup>
+            <col style="width: 45px" />
+            <col />
+        </colgroup>
+        <tbody>
+            <tr>
+                <td>
+                    <span>{{item.Slots}}</span>
+                </td>
+                <td>
+                    <span class="item-name" style="color: rgb(255, 128, 0)"> {{ item.Name }}</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <br />
+</ng-container>
+
+<ng-template #detailedMode>
+<table class="item-card">
+    <tbody>
+        <tr>
+            <td colspan="3">
+                <table>
+                    <colgroup>
+                        <col style="width: 45px" />
+                        <col />
+                    </colgroup>
+                    <tbody>
+                        <tr>
+                            <td rowspan="5">
+                                <div class="icon-container">
+                                    <span
+                                        class="item-icon"
+                                        style="
+                                            background-image: url(/static/iconss/dragitem4.png);
+                                            background-position: -120px -0px;
+                                            display: inline-block;
+                                            height: 40px;
+                                            width: 40px;
+                                        "
+                                        title="Icon 626"
+                                    ></span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="item-name" style="color: rgb(255, 128, 0)"> {{ item.Name }}</span>
+                            </td>
+                        </tr>
+                        <!-- <tr>
+                            <td>Magic Attuneable</td>
+                        </tr> -->
+                        <tr>
+                            <td><b>Class: </b> {{ item.Class }}</td>
+                        </tr>
+                        <!-- <tr>
+                            <td><b>Race: </b>ALL</td>
+                        </tr> -->
+                        <tr>
+                            <td style="max-width: 225px"><b>Slot: </b>{{ item.Slots }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3"></td>
+        </tr>
+        <tr>
+            <td>
+                <table style="min-width: 150px">
+                    <tbody>
+                        <tr>
+                            <td><b>Size: </b></td>
+                            <td align="right">{{ item.Size }}</td>
+                        </tr>
+                        <tr>
+                            <td><b>Weight: </b></td>
+                            <td align="right">{{ item.Weight }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td>
+                <table style="min-width: 150px">
+                    <tbody>
+                        <tr *ngIf="item.AC > 0">
+                            <td><b>AC: </b></td>
+                            <td align="right">{{ item.AC }}</td>
+                            <td align="left"></td>
+                        </tr>
+                        <tr *ngIf="item.HP > 0">
+                            <td><b>HP: </b></td>
+                            <td align="right">{{ item.HP }}</td>
+                            <td align="left"></td>
+                        </tr>
+                        <tr *ngIf="item.Mana > 0">
+                            <td><b>Mana: </b></td>
+                            <td align="right">{{ item.Mana }}</td>
+                            <td align="left"></td>
+                        </tr>
+                        <tr *ngIf="item.Endurance > 0">
+                            <td><b>Endur: </b></td>
+                            <td align="right">{{ item.Endurance }}</td>
+                            <td align="left"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td><table style="min-width: 150px"></table></td>
+        </tr>
+        <tr>
+            <td>
+                <table>
+                    <tbody>
+                        <tr *ngIf="item.Strength > 0">
+                            <td><b>Strength: </b></td>
+                            <td align="right">{{ item.Strength }}</td>
+                            <td align="left" *ngIf="item.HeroicStrength > 0">
+                                <font class="text-warning">+{{ item.HeroicStrength }}</font>
+                            </td>
+                        </tr>
+                        <tr *ngIf="item.Stamina > 0">
+                            <td><b>Stamina: </b></td>
+                            <td align="right">{{ item.Stamina }}</td>
+                            <td align="left" *ngIf="item.HeroicStamina > 0">
+                                <font class="text-warning">+{{ item.HeroicStamina }}</font>
+                            </td>
+                        </tr>
+                        <tr *ngIf="item.Agility > 0">
+                            <td><b>Agility: </b></td>
+                            <td align="right">{{ item.Agility }}</td>
+                            <td align="left" *ngIf="item.HeroicAgility > 0">
+                                <font class="text-warning">+{{ item.HeroicAgility }}</font>
+                            </td>
+                        </tr>
+                        <tr *ngIf="item.Dexterity > 0">
+                            <td><b>Dexterity: </b></td>
+                            <td align="right">{{ item.Dexterity }}</td>
+                            <td align="left" *ngIf="item.HeroicDexterity">
+                                <font class="text-warning">+{{ item.HeroicDexterity }}</font>
+                            </td>
+                        </tr>
+                        <tr *ngIf="item.Intelligence > 0">
+                            <td><b>Intelligence: </b></td>
+                            <td align="right">{{ item.Intelligence }}</td>
+                            <td align="left" *ngIf="item.HeroicIntelligence">
+                                <font class="text-warning">+{{ item.HeroicIntelligence }}</font>
+                            </td>
+                        </tr>
+                        <tr *ngIf="item.Wisdom > 0">
+                            <td><b>Wisdom: </b></td>
+                            <td align="right">{{ item.Wisdom }}</td>
+                            <td align="left" *ngIf="item.HeroicWisdom > 0">
+                                <font class="text-warning">+{{ item.HeroicWisdom }}</font>
+                            </td>
+                        </tr>
+                        <tr *ngIf="item.Charisma > 0">
+                            <td><b>Charisma: </b></td>
+                            <td align="right">{{ item.Charisma }}</td>
+                            <td align="left" *ngIf="item.HeroicCharisma > 0">
+                                <font class="text-warning">+{{ item.HeroicCharisma }}</font>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td>
+                <table>
+                    <tbody>
+                        <tr *ngIf="item.MagicResist > 0">
+                            <td><b>Magic: </b></td>
+                            <td align="right">{{ item.MagicResist }}</td>
+                            <td align="left" *ngIf="item.HeroicMagicResist > 0">
+                                <font class="text-warning">+{{ item.HeroicMagicResist }}</font>
+                            </td>
+                        </tr>
+                        <tr *ngIf="item.FireResist > 0">
+                            <td><b>Fire: </b></td>
+                            <td align="right">{{ item.FireResist }}</td>
+                            <td align="left" *ngIf="item.HeroicFireResist > 0">
+                                <font class="text-warning">+{{ item.HeroicFireResist }}</font>
+                            </td>
+                        </tr>
+                        <tr *ngIf="item.ColdResist > 0">
+                            <td><b>Cold: </b></td>
+                            <td align="right">{{ item.ColdResist }}</td>
+                            <td align="left" *ngIf="item.HeroicColdResist > 0">
+                                <font class="text-warning">+{{ item.HeroicColdResist }}</font>
+                            </td>
+                        </tr>
+                        <tr *ngIf="item.DiseaseResist > 0">
+                            <td><b>Disease: </b></td>
+                            <td align="right">{{ item.DiseaseResist }}</td>
+                            <td align="left" *ngIf="item.HeroicDiseaseResist > 0">
+                                <font class="text-warning">+{{ item.HeroicDiseaseResist }}</font>
+                            </td>
+                        </tr>
+                        <tr *ngIf="item.PoisonResist > 0">
+                            <td><b>Poison: </b></td>
+                            <td align="right">{{ item.PoisonResist }}</td>
+                            <td align="left" *ngIf="item.HeroicPoisonResist > 0">
+                                <font class="text-warning">+{{ item.HeroicPoisonResist }}</font>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+            <td>
+                <table>
+                    <tbody>
+                        <tr *ngIf="item.Attack > 0">
+                            <td><b>Attack: </b></td>
+                            <td align="right">{{ item.Attack }}</td>
+                            <td align="left"></td>
+                        </tr>
+                        <tr *ngIf="item.Shielding > 0">
+                            <td><b>Shielding: </b></td>
+                            <td align="right">{{ item.Shielding }}</td>
+                            <td align="left"></td>
+                        </tr>
+                        <tr *ngIf="item.Accuracy > 0">
+                            <td><b>Accuracy: </b></td>
+                            <td align="right">{{ item.Accuracy }}</td>
+                            <td align="left"></td>
+                        </tr>
+                        <tr *ngIf="item.Haste > 0">
+                            <td><b>Haste: </b></td>
+                            <td align="right">{{ item.Haste }}</td>
+                            <td align="left"></td>
+                        </tr>
+                        <tr *ngIf="item.DamageShield > 0">
+                            <td><b>Damage Shield: </b></td>
+                            <td align="right">{{ item.DamageShield }}</td>
+                            <td align="left"></td>
+                        </tr>
+                        <tr *ngIf="item.StunResist > 0">
+                            <td><b>Stun Resist: </b></td>
+                            <td align="right">{{ item.StunResist }}</td>
+                            <td align="left"></td>
+                        </tr>
+                        <tr *ngIf="item.HealAmount > 0">
+                            <td><b>Heal Amount: </b></td>
+                            <td align="right">{{ item.HealAmount }}</td>
+                            <td align="left"></td>
+                        </tr>
+                        <tr *ngIf="item.SpellDamage > 0">
+                            <td><b>Spell Damage: </b></td>
+                            <td align="right">{{ item.SpellDamage }}</td>
+                            <td align="left"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3">&nbsp;</td>
+        </tr>
+        <tr *ngFor="let augmentSlot of item.AugmentSlots">
+            <td width="0%" nowrap="1" colspan="3">
+                <img src="/assets/blank_slot.gif" alt="blank slot" width="20" height="20" /> Slot {{ augmentSlot.SlotNumber }}, type
+                {{ augmentSlot.SlotType }} ({{AugmentSlotType[augmentSlot.SlotType]}})
+            </td>
+        </tr>
+        <tr *ngIf="item.Effect">
+            <td colspan="3" nowrap="1">
+                <b>Effect: </b><a class="link" href="/spell/1937">{{ item.Effect }}</a>
+            </td>
+        </tr>
+        <tr *ngIf="item.ClickEffect">
+            <td colspan="3" nowrap="1">
+                <b>Click Effect: </b><a class="link" href="/spell/1937">{{ item.ClickEffect }}</a> (<b>Casting time: </b
+                >{{ item.ClickCastingTime }})<br /><b>Click Type: </b>{{ item.ClickEffectType }}<br />
+            </td>
+        </tr>
+        <tr *ngIf="item.BardSkill">
+            <td width="0%" nowrap="1" colspan="3"><b>Bard skill: </b> {{item.BardSkill}} </td>
+        </tr>
+
+        <tr *ngIf="item.FocusEffect">
+            <td colspan="3" nowrap="1">
+                <b>Focus Effect: </b><a class="link" href="/spell/3545">{{ item.FocusEffect }}</a>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" nowrap="1" class="text-info">Proc rate Modifier: 20</td>
+        </tr>
+    </tbody>
+</table>
+</ng-template>

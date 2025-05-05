@@ -1,0 +1,9 @@
+<mat-slide-toggle
+  [ngModel]="(isSimpleMode$ | async)"
+  (change)="onDisplayModeChange($event)"
+>
+  
+{{ (isSimpleMode$ | async) ? 'Simple Mode' : 'Detailed Mode' }}
+</mat-slide-toggle>
+
+<app-item-card *ngFor="let item of items" [item]="item" [isSimpleMode]="(isSimpleMode$|async)!"></app-item-card>

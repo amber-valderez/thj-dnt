@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { outputFileToJson } from '../@shared/utils';
-import { BankEntry } from '../@shared/@models/bank-entry.type';
+import { outputFileToJson } from '../@shared/utils/file.utils';
+import { BankEntry } from '../@shared/@types/bank-entry.type';
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -8,16 +8,15 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { PlayerClass } from '../@shared/@enums/player-class.enum';
-import { itemIdToPlayerClassMap } from '../@shared/epic-utils';
-import { spellIdToPlayerClassMap } from '../@shared/spell-utils';
 import { BankCategory, getCategory } from '../@shared/@enums/bank-category.enum';
 import { BehaviorSubject, interval, Observable, Subscription } from 'rxjs';
 import { collection, collectionData, Firestore } from '@angular/fire/firestore';
 import { ItemSlot } from '../@shared/@enums/item-slot.enum';
 import { getDisplayDeltaFromDate } from '../@shared/utils/date-utils';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { ActivatedRoute } from '@angular/router';
+import { itemIdToPlayerClassMap } from '../@shared/utils/epic-utils';
+import { spellIdToPlayerClassMap } from '../@shared/utils/spell-utils';
 @Component({
     selector: 'ariza-bank',
     imports: [

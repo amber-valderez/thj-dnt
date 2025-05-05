@@ -1,0 +1,44 @@
+.item-card {
+    border: 1px solid transparent;
+    border-collapse: collapse;
+    background-color: rgb(43,48,53);
+    margin: 20px 0;
+}
+
+.item-card td,
+item-card th {
+    border: 1px solid transparent;
+    vertical-align: top;
+}
+.table-debug {
+    border: 1px solid #000;
+    border-collapse: collapse;
+}
+
+.table-debug th,
+.table-debug td {
+    border: 1px solid #000;
+    vertical-align: top;
+}
+
+.table-debug table {
+    border: 1px solid #000;
+}
+
+td > table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+}
+
+td > table td {
+    vertical-align: top;
+}
+
+.item-name {
+    font-weight: bold;
+}
+
+.text-warning {
+    color: rgba(255, 193, 7, 1);
+}
