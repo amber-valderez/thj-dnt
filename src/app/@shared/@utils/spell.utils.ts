@@ -1,20 +1,21 @@
-
-import { BeastlordSpells } from "@spells/beastlord-spells";
-import { ClericSpells } from "@spells/cleric-spells";
-import { DruidSpells } from "@spells/druid-spells";
-import { EnchanterSpells } from "@spells/enchanter-spells";
-import { MagicianSpells } from "@spells/magician-spells";
-import { NecromancerSpells } from "@spells/necromancer-spells";
-import { PaladinSpells } from "@spells/paladin-spells";
-import { RangerSpells } from "@spells/ranger-spells";
-import { ShadowKnightSpells } from "@spells/shadow-knight-spells";
-import { ShamanSpells } from "@spells/shaman-spells";
-import { WizardSpells } from "@spells/wizard-spells";
-import { PlayerClass } from "@enums/player-class.enum";
-
+import { PlayerClass } from '@enums/index';
+import {
+    BardSpells,
+    BeastlordSpells,
+    ClericSpells,
+    DruidSpells,
+    EnchanterSpells,
+    MagicianSpells,
+    NecromancerSpells,
+    PaladinSpells,
+    RangerSpells,
+    ShadowKnightSpells,
+    ShamanSpells,
+    WizardSpells,
+} from '@spells/index';
 
 export const SpellClassMappings = new Map<PlayerClass, Array<number>>([
-    [PlayerClass.Bard, WizardSpells],
+    [PlayerClass.Bard, BardSpells],
     [PlayerClass.Beastlord, BeastlordSpells],
     [PlayerClass.Cleric, ClericSpells],
     [PlayerClass.Druid, DruidSpells],
@@ -43,4 +44,4 @@ export const spellIdToPlayerClassMap = (): Map<number, Array<PlayerClass>> => {
         });
     });
     return spellIdToPlayerClassesMap;
-}
+};
