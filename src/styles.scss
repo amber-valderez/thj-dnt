@@ -8,3 +8,44 @@ html {
     density: 0
   ));
 }
+
+body {
+    margin: 0;
+}
+
+/* Full canvas div takes up the whole screen */
+.full-canvas {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+    text-align: center;
+  }
+  
+/* Style the text if necessary */
+.full-canvas p {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.drop-zone {
+    position: relative;
+}
+
+.drop-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    z-index: 999;
+    pointer-events: none;
+}
+

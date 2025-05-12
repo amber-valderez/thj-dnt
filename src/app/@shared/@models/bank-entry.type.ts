@@ -1,5 +1,3 @@
-import { ItemSlot } from "../@enums/item-slot.enum";
-
 export type BankEntry = {
     location: string;
     name: string;

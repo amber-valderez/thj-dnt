@@ -1,2 +1,10 @@
-<label for="file">Upload File:</label>
-<input id="file" type="file" (change)="onFilesSelected($event)" multiple />
+<div 
+    class="drop-zone" 
+    appFileDrop 
+    (filesDropped)="onFilesDropped($event)" 
+    (dragging)="onDragging($event)">
+    
+    <div class="full-canvas">
+        <span>{{(isDragging$ | async) ? 'Drop your files here' : 'Drag and drop files here'}}</span>
+    </div>
+</div>

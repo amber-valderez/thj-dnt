@@ -1,23 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { outputFileToJson } from '../@shared/utils';
-import { BankEntry } from '../@shared/@models/bank-entry.type';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
+import { BankEntry } from '@models/bank-entry.type';
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { PlayerClass } from '../@shared/@enums/player-class.enum';
-import { itemIdToPlayerClassMap } from '../@shared/epic-utils';
-import { spellIdToPlayerClassMap } from '../@shared/spell-utils';
-import { BankCategory, getCategory } from '../@shared/@enums/bank-category.enum';
 import { BehaviorSubject, interval, Observable, Subscription } from 'rxjs';
-import { collection, collectionData, Firestore } from '@angular/fire/firestore';
-import { ItemSlot } from '../@shared/@enums/item-slot.enum';
-import { getDisplayDeltaFromDate } from '../@shared/utils/date-utils';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Firestore } from '@angular/fire/firestore';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { ActivatedRoute } from '@angular/router';
+import { getDisplayDeltaFromDate, itemIdToPlayerClassMap, spellIdToPlayerClassMap, outputFileToJson } from '@utils/index';
+import { BankCategory, getCategory, ItemSlot, PlayerClass } from '@enums/index';
+
 @Component({
     selector: 'ariza-bank',
     imports: [
@@ -35,6 +30,7 @@ import { ActivatedRoute } from '@angular/router';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BankComponent {
+    
     private _searchText$ = new BehaviorSubject<string>('');
     private searchSubscription: Subscription | undefined;
     onSearchChange($event: Event) {
@@ -44,7 +40,7 @@ export class BankComponent {
     }
 
     private firestore = inject(Firestore);
-    private item$: Observable<any[]>;
+    @Input() items: Observable<any[]> = new Observable<any[]>();
 
     //#region Bank Data
     private _bankData$: BehaviorSubject<Map<BankCategory, BankEntry[]>> = new BehaviorSubject<Map<BankCategory, BankEntry[]>>(
@@ -97,9 +93,6 @@ export class BankComponent {
     public itemSlotBankEntryMap$ = this._itemSlotBankEntryMap$.asObservable();
 
     constructor() {
-        const itemCollection = collection(this.firestore, 'items');
-        this.item$ = collectionData(itemCollection);
-
         this.lastModifiedSubscription = interval(1000).subscribe(() => {
             if (this.lastModified) {
                 const displayDeltaFromDate = getDisplayDeltaFromDate(this.lastModified);
@@ -154,7 +147,7 @@ export class BankComponent {
     public initializeBankData(filter: string | null = null): void {
         // Initialize our bankData$
         let hasProcessedSharedBank = false;
-        this.item$.subscribe((rawData) => {
+        this.items.subscribe((rawData) => {
             this._classCategoryDataToBankEntryMap.clear();
             const bankData = new Map<BankCategory, BankEntry[]>();
 
