@@ -41,7 +41,6 @@ export class BankComponent {
         const input = $event.target as HTMLInputElement;
         const value = input.value;
         this._searchText$.next(value);
-        // throw new Error('Method not implemented.');
     }
 
     private firestore = inject(Firestore);
@@ -112,7 +111,6 @@ export class BankComponent {
     private resetValues = () => {
         this._itemSlots$.next((Object.values(ItemSlot).filter((value) => typeof value === 'number') as ItemSlot[]).sort((a, b) =>
             ItemSlot[a].localeCompare(ItemSlot[b])));
-        // this._classCategoryDataToBankEntryMap$.next(new Map<BankCategory, Map<PlayerClass | ItemSlot, Array<BankEntry>>>());
         this._classCategoryDataToBankEntryMap = new Map<BankCategory, Map<PlayerClass | ItemSlot, Array<BankEntry>>>();
     };
     ngOnDestroy(): void {
@@ -155,7 +153,6 @@ export class BankComponent {
 
     public initializeBankData(filter: string | null = null): void {
         // Initialize our bankData$
-        // this._bankData$.next(new Map<BankCategory, BankEntry[]>());
         let hasProcessedSharedBank = false;
         this.item$.subscribe((rawData) => {
             this._classCategoryDataToBankEntryMap.clear();
