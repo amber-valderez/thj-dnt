@@ -1,0 +1,19 @@
+<div 
+    class="drop-zone" 
+    appFileDrop
+    (filesDropped)="onFilesDropped($event)" 
+    (dragging)="isDragging = $event">
+
+    <ng-container *ngIf="items | async as itemList">
+        <ariza-bank *ngIf="itemList.length > 0; else noItems" [items]="items"></ariza-bank>
+    </ng-container>
+    <ng-template #noItems>
+        <div class="full-canvas">
+            No items found for {{ name$ | async }}.
+        </div>
+    </ng-template>
+      
+    <div class="drop-overlay" *ngIf="isDragging">
+        Drop your files here
+    </div>
+</div>

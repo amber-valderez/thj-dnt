@@ -1,6 +1,5 @@
-import { getBaseItemId, ItemQuality } from "./@enums/item-quality.enum";
-import { PlayerClass } from "./@enums/player-class.enum";
-import { BankEntry } from "./@models/bank-entry.type";
+import { PlayerClass } from "@enums/player-class.enum";
+
 
 export const bardEpicItemIds = [
     // Epic 1.0

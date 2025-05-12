@@ -1,4 +1,4 @@
-export type BankEntry = {
+export interface BankEntry {
     location: string;
     name: string;
     id: number;

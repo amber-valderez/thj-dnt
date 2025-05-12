@@ -1,22 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { outputFileToJson } from '../@shared/utils/file.utils';
-import { BankEntry } from '../@shared/@types/bank-entry.type';
+import { ChangeDetectionStrategy, Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatListModule } from '@angular/material/list';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { PlayerClass } from '../@shared/@enums/player-class.enum';
-import { BankCategory, getCategory } from '../@shared/@enums/bank-category.enum';
 import { BehaviorSubject, interval, Observable, Subscription } from 'rxjs';
-import { collection, collectionData, Firestore } from '@angular/fire/firestore';
-import { ItemSlot } from '../@shared/@enums/item-slot.enum';
-import { getDisplayDeltaFromDate } from '../@shared/utils/date-utils';
+import { Firestore } from '@angular/fire/firestore';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
-import { itemIdToPlayerClassMap } from '../@shared/utils/epic-utils';
-import { spellIdToPlayerClassMap } from '../@shared/utils/spell-utils';
+import { getDisplayDeltaFromDate, itemIdToPlayerClassMap, spellIdToPlayerClassMap, outputFileToJson } from '@utils/index';
+import { BankCategory, getCategory, ItemSlot, PlayerClass } from '@enums/index';
+import { BankEntry } from '@interfaces/bank-entry.interface';
+
 @Component({
     selector: 'ariza-bank',
     imports: [
@@ -34,17 +30,17 @@ import { spellIdToPlayerClassMap } from '../@shared/utils/spell-utils';
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BankComponent {
+    
     private _searchText$ = new BehaviorSubject<string>('');
     private searchSubscription: Subscription | undefined;
     onSearchChange($event: Event) {
         const input = $event.target as HTMLInputElement;
         const value = input.value;
         this._searchText$.next(value);
-        // throw new Error('Method not implemented.');
     }
 
     private firestore = inject(Firestore);
-    private item$: Observable<any[]>;
+    @Input() items: Observable<any[]> = new Observable<any[]>();
 
     //#region Bank Data
     private _bankData$: BehaviorSubject<Map<BankCategory, BankEntry[]>> = new BehaviorSubject<Map<BankCategory, BankEntry[]>>(
@@ -97,9 +93,6 @@ export class BankComponent {
     public itemSlotBankEntryMap$ = this._itemSlotBankEntryMap$.asObservable();
 
     constructor() {
-        const itemCollection = collection(this.firestore, 'items');
-        this.item$ = collectionData(itemCollection);
-
         this.lastModifiedSubscription = interval(1000).subscribe(() => {
             if (this.lastModified) {
                 const displayDeltaFromDate = getDisplayDeltaFromDate(this.lastModified);
@@ -111,7 +104,6 @@ export class BankComponent {
     private resetValues = () => {
         this._itemSlots$.next((Object.values(ItemSlot).filter((value) => typeof value === 'number') as ItemSlot[]).sort((a, b) =>
             ItemSlot[a].localeCompare(ItemSlot[b])));
-        // this._classCategoryDataToBankEntryMap$.next(new Map<BankCategory, Map<PlayerClass | ItemSlot, Array<BankEntry>>>());
         this._classCategoryDataToBankEntryMap = new Map<BankCategory, Map<PlayerClass | ItemSlot, Array<BankEntry>>>();
     };
     ngOnDestroy(): void {
@@ -154,9 +146,8 @@ export class BankComponent {
 
     public initializeBankData(filter: string | null = null): void {
         // Initialize our bankData$
-        // this._bankData$.next(new Map<BankCategory, BankEntry[]>());
         let hasProcessedSharedBank = false;
-        this.item$.subscribe((rawData) => {
+        this.items.subscribe((rawData) => {
             this._classCategoryDataToBankEntryMap.clear();
             const bankData = new Map<BankCategory, BankEntry[]>();
 
