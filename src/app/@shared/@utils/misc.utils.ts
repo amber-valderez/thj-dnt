@@ -16,6 +16,7 @@ export function outputFileToJson(rawData: string, filterByName: string | null, s
         17423, // Adventurer's Pack
         18756, // Tattered Note
         976012, // Large Bank Box,
+        17138, // Grandmaster's Carry-All
     ];
 
     const blacklistedItemLocations = ['Primary', 'Secondary', 'Chest'];
