@@ -786,6 +786,7 @@ export const WizardSpells = [
     15108,
     19411,
     15323,
+    28447,
     26615,  // Ancient: Destruction of Ice
     19315,  // Atol`s Spectral Shackles
     19525,  // Elnerick's Rending
