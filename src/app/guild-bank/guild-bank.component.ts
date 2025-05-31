@@ -24,7 +24,8 @@ export class GuildBankComponent {
             'dntbank-inventory.txt',
             'dntcraft-inventory.txt',
             'dntepics-inventory.txt',
-            'dntspells-inventory.txt'
+            'dntspells-inventory.txt',
+            'dntaugs-inventory.txt',
         ]));
         this.items = collectionData(bankData);
     }
