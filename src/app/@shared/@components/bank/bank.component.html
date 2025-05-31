@@ -14,7 +14,7 @@
             {{ tab.key | titlecase }}
         </ng-template>
         <div class="bank-content">
-            <div class="card-container" *ngIf="tab.key === BankCategory.Epics || tab.key === BankCategory.Spells; else elseIfItem">
+            <div class="card-container" *ngIf="tab.key === BankCategory.Epics || tab.key === BankCategory.Spells || tab.key === BankCategory.Augs; else elseIfItem">
                 <mat-card *ngFor="let class of (classesMap$ | async)?.get(tab.key)" class="spaced-card" appearance="outlined">
                     <mat-card-content class="center-text bold-text">
                         <mat-card-title>{{ class }}</mat-card-title>
