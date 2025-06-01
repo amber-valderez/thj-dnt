@@ -41,6 +41,41 @@ mat-card-content a {
     overflow-wrap: anywhere;
 }
 
+.class-toggle-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+.class-toggle-button {
+    border-radius: 20px;
+    min-width: 80px;
+    height: 40px;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    
+    &.selected {
+        background-color: #1976d2;
+        color: white;
+        
+        &:hover {
+            background-color: #1565c0;
+        }
+    }
+    
+    &.unselected {
+        background-color: #f5f5f5;
+        color: #666;
+        
+        &:hover {
+            background-color: #e0e0e0;
+        }
+    }
+}
+
 @media (max-width: 768px) {
     .card-container mat-card {
         max-width: 100%;

@@ -6,12 +6,17 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 import { BehaviorSubject, interval, Observable, Subscription } from 'rxjs';
 import { Firestore } from '@angular/fire/firestore';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { getDisplayDeltaFromDate, itemIdToPlayerClassMap, spellIdToPlayerClassMap, outputFileToJson } from '@utils/index';
 import { BankCategory, getCategory, ItemSlot, PlayerClass } from '@enums/index';
+import { ItemIdsByClass } from '@interfaces/itemIds-by-class.interface';
+import itemIdsByClassJson from '../../../../assets/item-ids-by-class.json';
+
+const itemIdsByClass: ItemIdsByClass = itemIdsByClassJson;
 
 @Component({
     selector: 'ariza-bank',
@@ -24,6 +29,7 @@ import { BankCategory, getCategory, ItemSlot, PlayerClass } from '@enums/index';
         MatFormFieldModule,
         MatInputModule,
         ReactiveFormsModule,
+        MatButtonModule,
     ],
     templateUrl: './bank.component.html',
     styleUrl: './bank.component.scss',
@@ -41,6 +47,74 @@ export class BankComponent {
 
     private firestore = inject(Firestore);
     @Input() items: Observable<any[]> = new Observable<any[]>();
+
+    //#region Class Filter
+    private _selectedClasses$ = new BehaviorSubject<Set<string>>(new Set(['All']));
+    public selectedClasses$ = this._selectedClasses$.asObservable();
+    
+    public availableClasses: string[] = [
+        ...Object.values(PlayerClass),
+        'All'
+    ].filter(ac => ac !== 'Unknown');
+    
+    public toggleClass(className: string): void {
+        const currentSelection = new Set(this._selectedClasses$.value);
+        
+        if (className === 'All') {
+            // If All is clicked, select only All
+            currentSelection.clear();
+            currentSelection.add('All');
+        } else {
+            // Remove 'All' if it's selected
+            currentSelection.delete('All');
+            
+            // Toggle the specific class
+            if (currentSelection.has(className)) {
+                currentSelection.delete(className);
+            } else {
+                currentSelection.add(className);
+            }
+            
+            // If no classes are selected, default to 'All'
+            if (currentSelection.size === 0) {
+                currentSelection.add('All');
+            }
+        }
+        
+        this._selectedClasses$.next(currentSelection);
+        
+        // Re-initialize bank data with current search term and class filter
+        const currentSearchTerm = this._searchText$.value;
+        this.resetValues();
+        this.initializeBankData(currentSearchTerm);
+    }
+    
+    public isClassSelected(className: string): boolean {
+        return this._selectedClasses$.value.has(className);
+    }
+    
+    private shouldIncludeItem(itemId: number): boolean {
+        const selectedClasses = this._selectedClasses$.value;
+        
+        // If 'All' is selected, include all items
+        if (selectedClasses.has('All')) {
+            return true;
+        }
+        if (itemIdsByClass['All'].includes(itemId)) {
+            return true;
+        }
+        
+        // Check if the item belongs to any of the selected classes
+        for (const className of selectedClasses) {
+            const classKey = className as keyof ItemIdsByClass;
+            if (itemIdsByClass[classKey] && itemIdsByClass[classKey].includes(itemId)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    //#endregion
 
     //#region Bank Data
     private _bankData$: BehaviorSubject<Map<BankCategory, BankEntry[]>> = new BehaviorSubject<Map<BankCategory, BankEntry[]>>(
@@ -162,7 +236,9 @@ export class BankComponent {
                 // Remove the first 3 characters (dnt)
                 // Split on -, get the first index ('bank' vs 'craft')
                 const category = name.substring(3).split('-')[0];
-                const processedData: BankEntry[] = outputFileToJson(data, filter, hasProcessedSharedBank).sort((a, b) => a.name.localeCompare(b.name));
+                const processedData: BankEntry[] = outputFileToJson(data, filter, hasProcessedSharedBank)
+                    .filter(item => this.shouldIncludeItem(item.id))
+                    .sort((a, b) => a.name.localeCompare(b.name));
                 hasProcessedSharedBank = true;
                 const categoryEnum = getCategory(category);
                 this._processData(processedData, categoryEnum);
