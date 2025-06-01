@@ -34,36 +34,41 @@ export function outputFileToJson(rawData: string, filterByName: string | null, s
 
         // Ensure the line has the expected number of columns
         if (columns.length === 5) {
-            const [location, name, id, count, slots] = columns;
+            const [location, name, idValue, count, slots] = columns;
+            const id = +idValue; // coerce string to number
+            const baseId = getBaseItemId(id);
             const isSharedBank = location.startsWith('SharedBank');
-            if (filterByName && !name.toLowerCase().includes(filterByName.toLowerCase())) 
+            
+            if (filterByName && !name.toLowerCase().includes(filterByName.toLowerCase())) {
                 continue;
-
+            }
+            
             if (
-                +id === 0 ||
-                blacklistedItemIds.includes(+id) ||
+                id === 0 ||
+                blacklistedItemIds.includes(baseId) ||
                 blacklistedItemLocations.includes(location)
-            )
+            ) {
                 continue;
+            }
 
             if (isSharedBank && skipSharedSlots) {
                 continue;
             }
 
-            if (result.some((entry) => entry.id === +id)) {
-                const existingEntry = result.find((entry) => entry.id === +id);
+            if (result.some((entry) => entry.id === id)) {
+                const existingEntry = result.find((entry) => entry.id === id);
                 if (existingEntry) {
                     existingEntry.count += +count;
                     continue;
                 }
             } else {
-                const baseId = getBaseItemId(+id);
+                
                 const itemSlot = ItemIdToSlotMap.has('' + baseId) ? ItemIdToSlotMap.get('' + baseId) ?? 0 : 0;
 
                 const bankEntry: BankEntry = {
                     location,
                     name,
-                    id: +id,
+                    id: id,
                     count: +count,
                     slots: +slots,
                     baseId: baseId,

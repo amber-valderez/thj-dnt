@@ -4,6 +4,7 @@ export enum BankCategory {
     Epics = 'Epics',
     Spells = 'Spells',
     Craft = 'Craft',
+    Augs = 'Augs',
 }
 
 export const getCategory = (category: string): BankCategory => {
