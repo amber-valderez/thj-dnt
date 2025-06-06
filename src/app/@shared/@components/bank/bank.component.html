@@ -8,6 +8,24 @@
     </mat-card-content>
 </mat-card>
 
+<!-- Class Filter Toggles -->
+<mat-card class="spaced-card" appearance="outlined">
+    <mat-card-content>
+        <mat-card-title class="center-text">Class Filter</mat-card-title>
+        <div class="class-toggle-container">
+            <button 
+                mat-raised-button 
+                *ngFor="let className of availableClasses" 
+                [class.selected]="isClassSelected(className)"
+                [class.unselected]="!isClassSelected(className)"
+                (click)="toggleClass(className)"
+                class="class-toggle-button">
+                {{ className }}
+            </button>
+        </div>
+    </mat-card-content>
+</mat-card>
+
 <mat-tab-group animationDuration="0ms">
     <mat-tab *ngFor="let tab of bankData$ | async | keyvalue">
         <ng-template mat-tab-label>
@@ -28,7 +46,6 @@
                     </mat-card-content>
                 </mat-card>
             </div>
-
             <ng-template #elseIfItem>
                 <div class="card-container" *ngIf="tab.key === BankCategory.Items; else others">
                     <mat-card *ngFor="let itemSlot of itemSlots$ | async" class="spaced-card" appearance="outlined">
