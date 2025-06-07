@@ -22,6 +22,14 @@
                 class="class-toggle-button">
                 {{ className }}
             </button>
+            <button 
+                mat-raised-button
+                [class.selected]="isClassSelected(null)"
+                [class.unselected]="!isClassSelected(null)"
+                (click)="toggleClass(null)"
+                class="class-toggle-button">
+                ALL
+            </button>
         </div>
     </mat-card-content>
 </mat-card>

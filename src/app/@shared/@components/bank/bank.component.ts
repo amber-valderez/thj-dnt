@@ -54,14 +54,12 @@ export class BankComponent {
 
     private _allPlayerClasses = Object.values(PlayerClass);
     
-    public availableFilterableClasses: string[] = [
-        ...this._allPlayerClasses,
-        'All'
+    public availableFilterableClasses = [
+        ...this._allPlayerClasses
     ].filter(ac => ac !== 'Unknown');
     
-    public toggleClass(className: string): void {
+    public toggleClass(playerClass: PlayerClass | null): void {
         const currentSelection = new Set(this._selectedClasses$.value);
-        const playerClass = this.getPlayerClass(className);
         
         if (!playerClass) {
             // All was clicked
@@ -83,20 +81,12 @@ export class BankComponent {
         this.initializeBankData(currentSearchTerm);
     }
     
-    public isClassSelected(className: string): boolean {
-        if (className === 'All' && !this._selectedClasses$.value.size) {
-            return false;
+    public isClassSelected(playerClass: PlayerClass | null): boolean {
+        // null / no selected classes = All
+        if (!playerClass) {
+            return !this._selectedClasses$.value.size;
         }
-        const playerClass = this.getPlayerClass(className);
         return this._selectedClasses$.value.has(playerClass);
-    }
-
-    public isAllFilterSelected(): boolean {
-        return !this._selectedClasses$.value.size;
-    }
-
-    public getPlayerClass(className: string): PlayerClass {
-        return this._allPlayerClasses.find(c => c == className) ?? PlayerClass.Unknown;
     }
     
     private shouldIncludeItem(itemId: number): boolean {
