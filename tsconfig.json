@@ -21,6 +21,7 @@
     "module": "ES2022",
     "baseUrl": "src",
     "paths": {
+        "@assets/*":        ["assets/*"],
         "@components/*":    ["app/@shared/@components/*"],
         "@data/*":          ["app/@shared/@data/*"],
         "@directives/*":    ["app/@shared/@directives/*"],

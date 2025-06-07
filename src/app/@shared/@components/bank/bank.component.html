@@ -15,7 +15,7 @@
         <div class="class-toggle-container">
             <button 
                 mat-raised-button 
-                *ngFor="let className of availableClasses" 
+                *ngFor="let className of availableFilterableClasses" 
                 [class.selected]="isClassSelected(className)"
                 [class.unselected]="!isClassSelected(className)"
                 (click)="toggleClass(className)"

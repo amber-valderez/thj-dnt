@@ -14,7 +14,7 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { getDisplayDeltaFromDate, itemIdToPlayerClassMap, spellIdToPlayerClassMap, outputFileToJson } from '@utils/index';
 import { BankCategory, getCategory, ItemSlot, PlayerClass } from '@enums/index';
 import { ItemIdsByClass } from '@interfaces/itemIds-by-class.interface';
-import itemIdsByClassJson from '../../../../assets/item-ids-by-class.json';
+import itemIdsByClassJson from '@assets/item-ids-by-class.json';
 
 const itemIdsByClass: ItemIdsByClass = itemIdsByClassJson;
 
@@ -49,35 +49,29 @@ export class BankComponent {
     @Input() items: Observable<any[]> = new Observable<any[]>();
 
     //#region Class Filter
-    private _selectedClasses$ = new BehaviorSubject<Set<string>>(new Set(['All']));
+    private _selectedClasses$ = new BehaviorSubject<Set<PlayerClass>>(new Set());
     public selectedClasses$ = this._selectedClasses$.asObservable();
+
+    private _allPlayerClasses = Object.values(PlayerClass);
     
-    public availableClasses: string[] = [
-        ...Object.values(PlayerClass),
+    public availableFilterableClasses: string[] = [
+        ...this._allPlayerClasses,
         'All'
     ].filter(ac => ac !== 'Unknown');
     
     public toggleClass(className: string): void {
         const currentSelection = new Set(this._selectedClasses$.value);
+        const playerClass = this.getPlayerClass(className);
         
-        if (className === 'All') {
-            // If All is clicked, select only All
+        if (!playerClass) {
+            // All was clicked
             currentSelection.clear();
-            currentSelection.add('All');
         } else {
-            // Remove 'All' if it's selected
-            currentSelection.delete('All');
-            
             // Toggle the specific class
-            if (currentSelection.has(className)) {
-                currentSelection.delete(className);
+            if (currentSelection.has(playerClass)) {
+                currentSelection.delete(playerClass);
             } else {
-                currentSelection.add(className);
-            }
-            
-            // If no classes are selected, default to 'All'
-            if (currentSelection.size === 0) {
-                currentSelection.add('All');
+                currentSelection.add(playerClass);
             }
         }
         
@@ -90,21 +84,31 @@ export class BankComponent {
     }
     
     public isClassSelected(className: string): boolean {
-        return this._selectedClasses$.value.has(className);
+        if (className === 'All' && !this._selectedClasses$.value.size) {
+            return false;
+        }
+        const playerClass = this.getPlayerClass(className);
+        return this._selectedClasses$.value.has(playerClass);
+    }
+
+    public isAllFilterSelected(): boolean {
+        return !this._selectedClasses$.value.size;
+    }
+
+    public getPlayerClass(className: string): PlayerClass {
+        return this._allPlayerClasses.find(c => c == className) ?? PlayerClass.Unknown;
     }
     
     private shouldIncludeItem(itemId: number): boolean {
         const selectedClasses = this._selectedClasses$.value;
         
-        // If 'All' is selected, include all items
-        if (selectedClasses.has('All')) {
+        if (!selectedClasses.size) {
             return true;
         }
         if (itemIdsByClass['All'].includes(itemId)) {
             return true;
         }
         
-        // Check if the item belongs to any of the selected classes
         for (const className of selectedClasses) {
             const classKey = className as keyof ItemIdsByClass;
             if (itemIdsByClass[classKey] && itemIdsByClass[classKey].includes(itemId)) {
