@@ -101,22 +101,21 @@ export class BankComponent {
     
     private shouldIncludeItem(itemId: number): boolean {
         const selectedClasses = this._selectedClasses$.value;
-        
+        let shouldInclude = false;
         if (!selectedClasses.size) {
-            return true;
-        }
-        if (itemIdsByClass['All'].includes(itemId)) {
-            return true;
-        }
-        
-        for (const className of selectedClasses) {
-            const classKey = className as keyof ItemIdsByClass;
-            if (itemIdsByClass[classKey] && itemIdsByClass[classKey].includes(itemId)) {
-                return true;
+            shouldInclude = true;
+        } else if (itemIdsByClass['All']?.includes(itemId)) {
+            shouldInclude = true;
+        } else {
+            for (const className of selectedClasses) {
+                const classKey = className as keyof ItemIdsByClass;
+                if (itemIdsByClass[classKey]?.includes(itemId)) {
+                    shouldInclude = true;
+                    break;
+                }
             }
         }
-        
-        return false;
+        return shouldInclude;
     }
     //#endregion
 
