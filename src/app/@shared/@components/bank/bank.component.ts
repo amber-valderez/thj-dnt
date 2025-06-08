@@ -54,7 +54,7 @@ export class BankComponent {
     
     public availableFilterableClasses: PlayerClass[] = [
         ...this._allPlayerClasses,
-    ].filter(ac => ac !== 'Unknown');
+    ].filter(ac => ac !== PlayerClass.Unknown);
     
     public toggleClass(playerClass: PlayerClass): void {
         const currentSelection = new Set(this._selectedClasses$.value);
@@ -72,7 +72,7 @@ export class BankComponent {
         this.resetValues();
         this.initializeBankData(currentSearchTerm);
     }
-    
+
     public isClassSelected(playerClass: PlayerClass): boolean {
         return this._selectedClasses$.value.has(playerClass);
     }
