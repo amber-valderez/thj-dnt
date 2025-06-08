@@ -1,7 +1,7 @@
 <ng-container *ngIf="item; let itemDisplay">
     <h4 matLine>
-        <a *ngIf="itemDisplay.baseCount || itemDisplay.enchantedCount || itemDisplay.legendaryCount" href="https://www.thjdi.cc/item/{{ itemDisplay.baseId + ItemQuality.Legendary }}">{{ itemDisplay.name }}</a>
         <ng-container *ngIf="itemDisplay.baseCount || itemDisplay.enchantedCount || itemDisplay.legendaryCount">
+            <a href="https://www.thjdi.cc/item/{{ itemDisplay.baseId + ItemQuality.Legendary }}">{{ itemDisplay.name }}</a>
             (<a href="https://www.thjdi.cc/item/{{ itemDisplay.baseId }}" *ngIf="itemDisplay.baseCount" class="green-text">{{
                 itemDisplay.baseCount
             }}</a
