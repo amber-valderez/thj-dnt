@@ -6,11 +6,12 @@
 </ng-container>
 
 <ng-template #mainContent>
-    <mat-card class="spaced-card" appearance="outlined">
+    <div class="last-updated-toast">
+        Last Updated: {{ lastModifiedDisplay$ | async }}
+    </div>
+
+    <mat-card appearance="outlined">
         <mat-card-content>
-            <div class="center-text bold-text">
-                <mat-card-title>Last Updated: {{ lastModifiedDisplay$ | async }}</mat-card-title>
-            </div>
             <mat-form-field appearance="fill" class="spaced-input" subscriptSizing="dynamic">
                 <mat-label>Search</mat-label>
                 <input matInput placeholder="Enter search term" (input)="onSearchChange($event)" />
