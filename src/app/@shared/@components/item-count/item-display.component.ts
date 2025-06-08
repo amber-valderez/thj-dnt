@@ -15,21 +15,5 @@ export class ItemDisplayComponent {
     @Input() item?: BankEntry
 
     ItemQuality = ItemQuality
-    private _totalCount: BehaviorSubject<number | undefined> = new BehaviorSubject<number | undefined>(undefined);
-    public totalCount$ = this._totalCount.asObservable();
     constructor() {}
-
-    ngOnInit() {
-        this._updateTotalCount();
-    }
-
-    ngOnChanges() {
-        this._updateTotalCount();
-    }
-
-    private _updateTotalCount() {
-        this._totalCount.next(
-            (this.item?.baseCount ?? 0) + (this.item?.enchantedCount ?? 0) + (this.item?.legendaryCount ?? 0)
-        );
-    }
 }
