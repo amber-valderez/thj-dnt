@@ -7,14 +7,15 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { BehaviorSubject, interval, Observable, Subscription } from 'rxjs';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, switchMap, take, tap } from 'rxjs/operators';
 import { getDisplayDeltaFromDate, itemIdToPlayerClassMap, spellIdToPlayerClassMap, outputFileToJson } from '@utils/index';
 import { BankCategory, getCategory, ItemQuality, ItemSlot, PlayerClass } from '@enums/index';
 import { ItemIdsByClass } from '@interfaces/itemIds-by-class.interface';
 import itemIdsByClassJson from '@assets/item-ids-by-class.json';
-import { ItemDisplayComponent } from "../item-count/item-display.component";
+import { ItemDisplayComponent } from '../item-count/item-display.component';
 
 const itemIdsByClass: ItemIdsByClass = itemIdsByClassJson;
 
@@ -30,19 +31,20 @@ const itemIdsByClass: ItemIdsByClass = itemIdsByClassJson;
         MatInputModule,
         ReactiveFormsModule,
         MatButtonModule,
-        ItemDisplayComponent
-],
+        ItemDisplayComponent,
+        MatProgressSpinnerModule,
+    ],
     templateUrl: './bank.component.html',
     styleUrl: './bank.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BankComponent {
-    
-    private _searchText$ = new BehaviorSubject<string>('');
+    private _searchText$ = new BehaviorSubject<string | undefined>(undefined);
     private searchSubscription: Subscription | undefined;
     onSearchChange($event: Event) {
         const input = $event.target as HTMLInputElement;
-        const value = input.value;
+        const inputValue = input.value.trim();
+        const value = inputValue.length > 0 ? inputValue : undefined;
         this._searchText$.next(value);
     }
 
@@ -53,38 +55,32 @@ export class BankComponent {
     public selectedClasses$ = this._selectedClasses$.asObservable();
 
     private _allPlayerClasses = Object.values(PlayerClass);
-    
-    public availableFilterableClasses: PlayerClass[] = [
-        ...this._allPlayerClasses,
-    ].filter(ac => ac !== PlayerClass.Unknown);
-    
+
+    public availableFilterableClasses: PlayerClass[] = [...this._allPlayerClasses].filter((ac) => ac !== PlayerClass.Unknown);
+
     public toggleClass(playerClass: PlayerClass): void {
         const currentSelection = new Set(this._selectedClasses$.value);
 
         // Toggle the specific class
-        currentSelection.has(playerClass) ?
-            currentSelection.delete(playerClass) :
-            currentSelection.add(playerClass);
+        currentSelection.has(playerClass) ? currentSelection.delete(playerClass) : currentSelection.add(playerClass);
 
-        
         this._selectedClasses$.next(currentSelection);
-        
+
         // Re-initialize bank data with current search term and class filter
-        const currentSearchTerm = this._searchText$.value;
         this.resetValues();
-        this.initializeBankData(currentSearchTerm);
+        this.initializeBankData(this._searchText$.value);
     }
 
     public isClassSelected(playerClass: PlayerClass): boolean {
         return this._selectedClasses$.value.has(playerClass);
     }
-    
+
     public resetClassFilter(): void {
         this._selectedClasses$.next(new Set<PlayerClass>());
         this.resetValues();
         this.initializeBankData(this._searchText$.value);
     }
-    
+
     private shouldIncludeItem(itemId: number): boolean {
         const selectedClasses = this._selectedClasses$.value;
         let shouldInclude = false;
@@ -167,8 +163,11 @@ export class BankComponent {
     }
 
     private resetValues = () => {
-        this._itemSlots$.next((Object.values(ItemSlot).filter((value) => typeof value === 'number') as ItemSlot[]).sort((a, b) =>
-            ItemSlot[a].localeCompare(ItemSlot[b])));
+        this._itemSlots$.next(
+            (Object.values(ItemSlot).filter((value) => typeof value === 'number') as ItemSlot[]).sort((a, b) =>
+                ItemSlot[a].localeCompare(ItemSlot[b])
+            )
+        );
         this._classCategoryDataToBankEntryMap = new Map<BankCategory, Map<PlayerClass | ItemSlot, Array<BankEntry>>>();
     };
     ngOnDestroy(): void {
@@ -179,6 +178,9 @@ export class BankComponent {
             this.searchSubscription.unsubscribe();
         }
     }
+
+    private _isLoading$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
+    public isLoading$ = this._isLoading$.asObservable();
 
     ngOnInit(): void {
         // Existing initialization code
@@ -201,6 +203,7 @@ export class BankComponent {
                 debounceTime(500),
                 distinctUntilChanged(),
                 switchMap((searchTerm) => {
+                    console.log('Search term changed:', searchTerm);
                     this.resetValues();
                     this.initializeBankData(searchTerm);
                     return this.bankData$;
@@ -209,34 +212,41 @@ export class BankComponent {
             .subscribe(() => {});
     }
 
-    public initializeBankData(filter: string | null = null): void {
+    public initializeBankData(filter: string | undefined = undefined): void {
         // Initialize our bankData$
         let hasProcessedSharedBank = false;
-        this.items.subscribe((rawData) => {
-            this._classCategoryDataToBankEntryMap.clear();
-            const bankData = new Map<BankCategory, BankEntry[]>();
+        this.items
+            .pipe(
+                take(1),
+                tap(() => {
+                    this._isLoading$.next(false);
+                })
+            )
+            .subscribe((rawData) => {
+                this._classCategoryDataToBankEntryMap.clear();
+                const bankData = new Map<BankCategory, BankEntry[]>();
 
-            rawData.forEach((itemPayload) => {
-                const name = itemPayload.name;
-                const data = itemPayload.data;
-                const rawDate = itemPayload.date;
-                const date = rawDate ? new Date(rawDate) : null;
-                if (date && (!this.lastModified || this.lastModified < date)) {
-                    this.lastModified = date;
-                }
-                // Remove the first 3 characters (dnt)
-                // Split on -, get the first index ('bank' vs 'craft')
-                const category = name.substring(3).split('-')[0];
-                const processedData: BankEntry[] = outputFileToJson(data, filter, hasProcessedSharedBank)
-                    .filter(item => this.shouldIncludeItem(item.id))
-                    .sort((a, b) => a.name.localeCompare(b.name));
-                hasProcessedSharedBank = true;
-                const categoryEnum = getCategory(category);
-                this._processData(processedData, categoryEnum);
-                bankData.set(categoryEnum, processedData);
+                rawData.forEach((itemPayload) => {
+                    const name = itemPayload.name;
+                    const data = itemPayload.data;
+                    const rawDate = itemPayload.date;
+                    const date = rawDate ? new Date(rawDate) : null;
+                    if (date && (!this.lastModified || this.lastModified < date)) {
+                        this.lastModified = date;
+                    }
+                    // Remove the first 3 characters (dnt)
+                    // Split on -, get the first index ('bank' vs 'craft')
+                    const category = name.substring(3).split('-')[0];
+                    const processedData: BankEntry[] = outputFileToJson(data, filter, hasProcessedSharedBank)
+                        .filter((item) => this.shouldIncludeItem(item.id))
+                        .sort((a, b) => a.name.localeCompare(b.name));
+                    hasProcessedSharedBank = true;
+                    const categoryEnum = getCategory(category);
+                    this._processData(processedData, categoryEnum);
+                    bankData.set(categoryEnum, processedData);
+                });
+                this._bankData$.next(bankData);
             });
-            this._bankData$.next(bankData);
-        });
     }
 
     private _classCategoryDataToBankEntryMap$: BehaviorSubject<Map<BankCategory, Map<PlayerClass | ItemSlot, Array<BankEntry>>>> =
@@ -287,7 +297,10 @@ export class BankComponent {
             const _itemSlots = Object.values(ItemSlot).filter((value) => typeof value === 'number') as ItemSlot[];
 
             const itemSlotBankEntryMap: Map<ItemSlot, BankEntry[]> = new Map<ItemSlot, BankEntry[]>(
-                _itemSlots.map((slot) => [slot, processedData.filter((item) => (slot === 0 && item.itemSlot === 0) || (item.itemSlot & slot) !== 0)])
+                _itemSlots.map((slot) => [
+                    slot,
+                    processedData.filter((item) => (slot === 0 && item.itemSlot === 0) || (item.itemSlot & slot) !== 0),
+                ])
             );
 
             this._itemSlots$.next(this._itemSlots$.value.filter((slot) => itemSlotBankEntryMap.get(slot)?.length));
@@ -311,5 +324,9 @@ export class BankComponent {
             });
             this._classCategoryDataToBankEntryMap$.next(this._classCategoryDataToBankEntryMap);
         }
+    }
+    
+    trackByTabKey(index: number, tab: { key: any; value: any }): any {
+        return tab.key;
     }
 }

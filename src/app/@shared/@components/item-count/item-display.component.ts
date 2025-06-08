@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ItemQuality } from '@enums/item-quality.enum';
 import { BankEntry } from '@models/bank-entry.type';
 import { BehaviorSubject } from 'rxjs';
@@ -10,6 +10,7 @@ import { BehaviorSubject } from 'rxjs';
     styleUrls: ['./item-display.component.scss'],
     imports: [CommonModule],
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ItemDisplayComponent {
     @Input() item?: BankEntry

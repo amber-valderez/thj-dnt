@@ -2,7 +2,7 @@ import { ItemIdToSlotMap } from '@data/item-id-to-slot.data';
 import { getBaseItemId, ItemQuality } from '@enums/item-quality.enum';
 import { BankEntry } from '@models/bank-entry.type';
 
-export function outputFileToJson(rawData: string, filterByName: string | null, skipSharedSlots: boolean = true): BankEntry[] {
+export function outputFileToJson(rawData: string, filterByName: string | undefined, skipSharedSlots: boolean = true): BankEntry[] {
     // Split the raw data by new lines
     const lines = rawData.split('\n');
 

@@ -1,72 +1,77 @@
-<mat-card class="spaced-card" appearance="outlined">
-    <mat-card-content class="center-text bold-text">
-        <mat-card-title>Last Updated: {{ lastModifiedDisplay$ | async }}</mat-card-title>
-        <mat-form-field appearance="fill" class="spaced-input">
-            <mat-label>Search</mat-label>
-            <input matInput placeholder="Enter search term" (input)="onSearchChange($event)" />
-        </mat-form-field>
-    </mat-card-content>
-</mat-card>
+<ng-container *ngIf="isLoading$ | async; else mainContent">
+    <div class="loading-container">
+        <mat-spinner diameter="48"></mat-spinner>
+        <div class="loading-message">Loading Bank Data....</div>
+    </div>
+</ng-container>
 
-<!-- Class Filter Toggles -->
-<mat-card class="spaced-card" appearance="outlined">
-    <mat-card-content>
-        <mat-card-title class="center-text">Class Filter</mat-card-title>
-        <div class="class-toggle-container">
-            <button
-                mat-raised-button
-                *ngFor="let className of availableFilterableClasses"
-                [class.selected]="isClassSelected(className)"
-                [class.unselected]="!isClassSelected(className)"
-                (click)="toggleClass(className)"
-                class="class-toggle-button"
-            >
-                {{ className }}
-            </button>
-            <button mat-raised-button class="class-toggle-button unselected" (click)="resetClassFilter()">Reset</button>
-        </div>
-    </mat-card-content>
-</mat-card>
-
-<mat-tab-group animationDuration="0ms">
-    <mat-tab *ngFor="let tab of bankData$ | async | keyvalue">
-        <ng-template mat-tab-label>
-            {{ tab.key | titlecase }}
-        </ng-template>
-        <div class="bank-content">
-            <div class="card-container" *ngIf="tab.key === BankCategory.Epics || tab.key === BankCategory.Spells; else elseIfItem">
-                <mat-card *ngFor="let class of (classesMap$ | async)?.get(tab.key)" class="spaced-card" appearance="outlined">
-                    <mat-card-content class="center-text bold-text">
-                        <mat-card-title>{{ class }}</mat-card-title>
-                        <mat-list>
-                            <mat-list-item *ngFor="let item of (classCategoryDataToBankEntryMap$ | async)?.get(tab.key)?.get(class)">
-                                <item-display [item]="item" />
-                            </mat-list-item>
-                        </mat-list>
-                    </mat-card-content>
-                </mat-card>
+<ng-template #mainContent>
+    <mat-card class="spaced-card" appearance="outlined">
+        <mat-card-content>
+            <div class="center-text bold-text">
+                <mat-card-title>Last Updated: {{ lastModifiedDisplay$ | async }}</mat-card-title>
             </div>
-            <ng-template #elseIfItem>
-                <div class="card-container" *ngIf="tab.key === BankCategory.Items; else others">
-                    <mat-card *ngFor="let itemSlot of itemSlots$ | async" class="spaced-card" appearance="outlined">
+            <mat-form-field appearance="fill" class="spaced-input" subscriptSizing="dynamic">
+                <mat-label>Search</mat-label>
+                <input matInput placeholder="Enter search term" (input)="onSearchChange($event)" />
+            </mat-form-field>
+            <mat-card-title class="center-text">Class Filter</mat-card-title>
+            <div class="class-toggle-container">
+                <button
+                    mat-raised-button
+                    *ngFor="let className of availableFilterableClasses"
+                    [class.selected]="isClassSelected(className)"
+                    [class.unselected]="!isClassSelected(className)"
+                    (click)="toggleClass(className)"
+                    class="class-toggle-button"
+                >
+                    {{ className }}
+                </button>
+                <button mat-raised-button class="class-toggle-button unselected" (click)="resetClassFilter()">Reset</button>
+            </div>
+        </mat-card-content>
+    </mat-card>
+
+    <mat-tab-group animationDuration="0ms">
+        <mat-tab *ngFor="let tab of bankData$ | async | keyvalue; trackBy: trackByTabKey">
+            <ng-template mat-tab-label>
+                {{ tab.key | titlecase }}
+            </ng-template>
+            <div class="bank-content">
+                <div class="card-container" *ngIf="tab.key === BankCategory.Epics || tab.key === BankCategory.Spells; else elseIfItem">
+                    <mat-card *ngFor="let class of (classesMap$ | async)?.get(tab.key)" class="spaced-card" appearance="outlined">
                         <mat-card-content class="center-text bold-text">
-                            <mat-card-title>{{ ItemSlot[itemSlot] }}</mat-card-title>
+                            <mat-card-title>{{ class }}</mat-card-title>
                             <mat-list>
-                                <mat-list-item *ngFor="let item of (itemSlotBankEntryMap$ | async)?.get(itemSlot)">
+                                <mat-list-item *ngFor="let item of (classCategoryDataToBankEntryMap$ | async)?.get(tab.key)?.get(class);">
                                     <item-display [item]="item" />
                                 </mat-list-item>
                             </mat-list>
                         </mat-card-content>
                     </mat-card>
                 </div>
-            </ng-template>
-            <ng-template #others>
-                <mat-list>
-                    <mat-list-item *ngFor="let item of tab.value">
-                        <item-display [item]="item" />
-                    </mat-list-item>
-                </mat-list>
-            </ng-template>
-        </div>
-    </mat-tab>
-</mat-tab-group>
+                <ng-template #elseIfItem>
+                    <div class="card-container" *ngIf="tab.key === BankCategory.Items; else others">
+                        <mat-card *ngFor="let itemSlot of itemSlots$ | async" class="spaced-card" appearance="outlined">
+                            <mat-card-content class="center-text bold-text">
+                                <mat-card-title>{{ ItemSlot[itemSlot] }}</mat-card-title>
+                                <mat-list>
+                                    <mat-list-item *ngFor="let item of (itemSlotBankEntryMap$ | async)?.get(itemSlot)">
+                                        <item-display [item]="item" />
+                                    </mat-list-item>
+                                </mat-list>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </ng-template>
+                <ng-template #others>
+                    <mat-list>
+                        <mat-list-item *ngFor="let item of tab.value">
+                            <item-display [item]="item" />
+                        </mat-list-item>
+                    </mat-list>
+                </ng-template>
+            </div>
+        </mat-tab>
+    </mat-tab-group>
+</ng-template>
