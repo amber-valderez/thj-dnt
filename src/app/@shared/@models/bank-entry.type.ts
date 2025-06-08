@@ -1,8 +1,10 @@
 export type BankEntry = {
-    location: string;
+    location?: string;
     name: string;
     id: number;
-    count: number;
+    baseCount: number;
+    enchantedCount?: number;
+    legendaryCount?: number;
     slots: number;
     baseId: number;
     // This can be multiple slots, so we are using a bitmask to represent it

@@ -1,5 +1,5 @@
 import { ItemIdToSlotMap } from '@data/item-id-to-slot.data';
-import { getBaseItemId } from '@enums/item-quality.enum';
+import { getBaseItemId, ItemQuality } from '@enums/item-quality.enum';
 import { BankEntry } from '@models/bank-entry.type';
 
 export function outputFileToJson(rawData: string, filterByName: string | null, skipSharedSlots: boolean = true): BankEntry[] {
@@ -34,20 +34,17 @@ export function outputFileToJson(rawData: string, filterByName: string | null, s
 
         // Ensure the line has the expected number of columns
         if (columns.length === 5) {
-            const [location, name, idValue, count, slots] = columns;
+            const [location, name, idValue, _count, slots] = columns;
+            const count = +_count; // Coerce count to number
             const id = +idValue; // coerce string to number
             const baseId = getBaseItemId(id);
             const isSharedBank = location.startsWith('SharedBank');
-            
+
             if (filterByName && !name.toLowerCase().includes(filterByName.toLowerCase())) {
                 continue;
             }
-            
-            if (
-                id === 0 ||
-                blacklistedItemIds.includes(baseId) ||
-                blacklistedItemLocations.includes(location)
-            ) {
+
+            if (id === 0 || blacklistedItemIds.includes(baseId) || blacklistedItemLocations.includes(location)) {
                 continue;
             }
 
@@ -55,29 +52,50 @@ export function outputFileToJson(rawData: string, filterByName: string | null, s
                 continue;
             }
 
-            if (result.some((entry) => entry.id === id)) {
-                const existingEntry = result.find((entry) => entry.id === id);
+            if (result.some((entry) => entry.baseId === baseId)) {
+                const existingEntry = result.find((entry) => entry.baseId === baseId);
                 if (existingEntry) {
-                    existingEntry.count += +count;
+                    if (id >= ItemQuality.Legendary) {
+                        existingEntry.legendaryCount = count+(existingEntry.legendaryCount ?? 0);
+                    } else if (id >= ItemQuality.Enchanted) {
+                        existingEntry.enchantedCount = count+(existingEntry.enchantedCount ?? 0);
+                    } else {
+                        existingEntry.baseCount += count;
+                    }
                     continue;
                 }
             } else {
-                
                 const itemSlot = ItemIdToSlotMap.has('' + baseId) ? ItemIdToSlotMap.get('' + baseId) ?? 0 : 0;
+
+                let normalizedName = name;
+                if (id >= ItemQuality.Legendary) {
+                    normalizedName = name.replace(/\s*\(Legendary\)$/i, '').trim();
+                }
+                else if (id >= ItemQuality.Enchanted) {
+                    normalizedName = name.replace(/\s*\(Enchanted\)$/i, '').trim();
+                }
 
                 const bankEntry: BankEntry = {
                     location,
-                    name,
+                    name: normalizedName,
                     id: id,
-                    count: +count,
+                    baseCount: 0,
                     slots: +slots,
                     baseId: baseId,
                     itemSlot: itemSlot,
                 };
+                if (count) {
+                    if (id >= ItemQuality.Legendary) {
+                        bankEntry.legendaryCount = +count;
+                    } else if (id >= ItemQuality.Enchanted) {
+                        bankEntry.enchantedCount = +count;
+                    } else {
+                        bankEntry.baseCount = +count;
+                    }
+                }
                 result.push(bankEntry);
             }
         }
     }
     return result;
 }
-

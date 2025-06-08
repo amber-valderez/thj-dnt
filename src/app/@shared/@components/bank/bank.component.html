@@ -13,21 +13,17 @@
     <mat-card-content>
         <mat-card-title class="center-text">Class Filter</mat-card-title>
         <div class="class-toggle-container">
-            <button 
-                mat-raised-button 
-                *ngFor="let className of availableFilterableClasses" 
+            <button
+                mat-raised-button
+                *ngFor="let className of availableFilterableClasses"
                 [class.selected]="isClassSelected(className)"
                 [class.unselected]="!isClassSelected(className)"
                 (click)="toggleClass(className)"
-                class="class-toggle-button">
+                class="class-toggle-button"
+            >
                 {{ className }}
             </button>
-            <button
-                mat-raised-button
-                class="class-toggle-button unselected" 
-                (click)="resetClassFilter()">
-                Reset
-            </button>
+            <button mat-raised-button class="class-toggle-button unselected" (click)="resetClassFilter()">Reset</button>
         </div>
     </mat-card-content>
 </mat-card>
@@ -44,9 +40,7 @@
                         <mat-card-title>{{ class }}</mat-card-title>
                         <mat-list>
                             <mat-list-item *ngFor="let item of (classCategoryDataToBankEntryMap$ | async)?.get(tab.key)?.get(class)">
-                                <h3 matLine>
-                                    <a href="https://www.thjdi.cc/item/{{ item.id }}">{{ item.name }}</a> ({{ item.count }})
-                                </h3>
+                                <item-display [item]="item" />
                             </mat-list-item>
                         </mat-list>
                     </mat-card-content>
@@ -59,9 +53,7 @@
                             <mat-card-title>{{ ItemSlot[itemSlot] }}</mat-card-title>
                             <mat-list>
                                 <mat-list-item *ngFor="let item of (itemSlotBankEntryMap$ | async)?.get(itemSlot)">
-                                    <h3 matLine>
-                                        <a href="https://www.thjdi.cc/item/{{ item.id }}">{{ item.name }}</a> ({{ item.count }})
-                                    </h3>
+                                    <item-display [item]="item" />
                                 </mat-list-item>
                             </mat-list>
                         </mat-card-content>
@@ -71,9 +63,7 @@
             <ng-template #others>
                 <mat-list>
                     <mat-list-item *ngFor="let item of tab.value">
-                        <h3 matLine>
-                            <a href="https://www.thjdi.cc/item/{{ item.id }}">{{ item.name }}</a> ({{ item.count }})
-                        </h3>
+                        <item-display [item]="item" />
                     </mat-list-item>
                 </mat-list>
             </ng-template>

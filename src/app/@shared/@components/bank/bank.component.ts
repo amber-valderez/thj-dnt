@@ -11,9 +11,10 @@ import { BehaviorSubject, interval, Observable, Subscription } from 'rxjs';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { getDisplayDeltaFromDate, itemIdToPlayerClassMap, spellIdToPlayerClassMap, outputFileToJson } from '@utils/index';
-import { BankCategory, getCategory, ItemSlot, PlayerClass } from '@enums/index';
+import { BankCategory, getCategory, ItemQuality, ItemSlot, PlayerClass } from '@enums/index';
 import { ItemIdsByClass } from '@interfaces/itemIds-by-class.interface';
 import itemIdsByClassJson from '@assets/item-ids-by-class.json';
+import { ItemDisplayComponent } from "../item-count/item-display.component";
 
 const itemIdsByClass: ItemIdsByClass = itemIdsByClassJson;
 
@@ -29,7 +30,8 @@ const itemIdsByClass: ItemIdsByClass = itemIdsByClassJson;
         MatInputModule,
         ReactiveFormsModule,
         MatButtonModule,
-    ],
+        ItemDisplayComponent
+],
     templateUrl: './bank.component.html',
     styleUrl: './bank.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -126,6 +128,8 @@ export class BankComponent {
     public BankCategory = BankCategory;
     public PlayerClass = PlayerClass;
     public ItemSlot = ItemSlot;
+
+    public ItemQuality = ItemQuality;
     //#endregion
 
     public Object = Object;
@@ -268,7 +272,7 @@ export class BankComponent {
                         const existingEntries = map.get(playerClass)!;
                         const existingEntry = existingEntries.find((existingEntry) => existingEntry.id === bankEntry.id);
                         if (existingEntry) {
-                            existingEntry.count += bankEntry.count;
+                            existingEntry.baseCount += bankEntry.baseCount;
                         } else {
                             existingEntries.push(bankEntry);
                         }
@@ -297,7 +301,7 @@ export class BankComponent {
                     const existingEntries: BankEntry[] = map.get(itemSlot)!;
                     const existingEntry = existingEntries.find((existingEntry) => existingEntry.id === bankEntry.id);
                     if (existingEntry) {
-                        existingEntry.count += bankEntry.count;
+                        existingEntry.baseCount += bankEntry.baseCount;
                     } else {
                         existingEntries.push(bankEntry);
                     }

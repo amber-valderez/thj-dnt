@@ -1,0 +1,23 @@
+<ng-container *ngIf="item; let itemDisplay">
+    <h4 matLine>
+        <a *ngIf="itemDisplay.baseCount || itemDisplay.enchantedCount || itemDisplay.legendaryCount" href="https://www.thjdi.cc/item/{{ itemDisplay.baseId + ItemQuality.Legendary }}">{{ itemDisplay.name }}</a>
+        <ng-container *ngIf="itemDisplay.baseCount || itemDisplay.enchantedCount || itemDisplay.legendaryCount">
+            (<a href="https://www.thjdi.cc/item/{{ itemDisplay.baseId }}" *ngIf="itemDisplay.baseCount" class="green-text">{{
+                itemDisplay.baseCount
+            }}</a
+            ><span *ngIf="itemDisplay.enchantedCount">{{ itemDisplay.baseCount ? "/" : "" }}</span
+            ><a
+                href="https://www.thjdi.cc/item/{{ itemDisplay.baseId + ItemQuality.Enchanted }}"
+                *ngIf="itemDisplay.enchantedCount"
+                class="blue-text"
+                >{{ itemDisplay.enchantedCount }}</a
+            ><span *ngIf="itemDisplay.legendaryCount">{{ itemDisplay.baseCount || itemDisplay.enchantedCount ? "/" : "" }}</span
+            ><a
+                href="https://www.thjdi.cc/item/{{ itemDisplay.baseId + ItemQuality.Legendary }}"
+                *ngIf="itemDisplay.legendaryCount"
+                class="gold-text"
+                >{{ itemDisplay.legendaryCount }}</a
+            >)
+        </ng-container>
+    </h4>
+</ng-container>
