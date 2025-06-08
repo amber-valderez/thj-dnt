@@ -8,7 +8,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { BehaviorSubject, interval, Observable, Subscription } from 'rxjs';
-import { Firestore } from '@angular/fire/firestore';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { getDisplayDeltaFromDate, itemIdToPlayerClassMap, spellIdToPlayerClassMap, outputFileToJson } from '@utils/index';
@@ -45,7 +44,6 @@ export class BankComponent {
         this._searchText$.next(value);
     }
 
-    private firestore = inject(Firestore);
     @Input() items: Observable<any[]> = new Observable<any[]>();
 
     //#region Class Filter
@@ -54,26 +52,18 @@ export class BankComponent {
 
     private _allPlayerClasses = Object.values(PlayerClass);
     
-    public availableFilterableClasses: string[] = [
+    public availableFilterableClasses: PlayerClass[] = [
         ...this._allPlayerClasses,
-        'All'
     ].filter(ac => ac !== 'Unknown');
     
-    public toggleClass(className: string): void {
+    public toggleClass(playerClass: PlayerClass): void {
         const currentSelection = new Set(this._selectedClasses$.value);
-        const playerClass = this.getPlayerClass(className);
-        
-        if (!playerClass) {
-            // All was clicked
-            currentSelection.clear();
-        } else {
-            // Toggle the specific class
-            if (currentSelection.has(playerClass)) {
-                currentSelection.delete(playerClass);
-            } else {
-                currentSelection.add(playerClass);
-            }
-        }
+
+        // Toggle the specific class
+        currentSelection.has(playerClass) ?
+            currentSelection.delete(playerClass) :
+            currentSelection.add(playerClass);
+
         
         this._selectedClasses$.next(currentSelection);
         
@@ -83,20 +73,14 @@ export class BankComponent {
         this.initializeBankData(currentSearchTerm);
     }
     
-    public isClassSelected(className: string): boolean {
-        if (className === 'All' && !this._selectedClasses$.value.size) {
-            return false;
-        }
-        const playerClass = this.getPlayerClass(className);
+    public isClassSelected(playerClass: PlayerClass): boolean {
         return this._selectedClasses$.value.has(playerClass);
     }
-
-    public isAllFilterSelected(): boolean {
-        return !this._selectedClasses$.value.size;
-    }
-
-    public getPlayerClass(className: string): PlayerClass {
-        return this._allPlayerClasses.find(c => c == className) ?? PlayerClass.Unknown;
+    
+    public resetClassFilter(): void {
+        this._selectedClasses$.next(new Set<PlayerClass>());
+        this.resetValues();
+        this.initializeBankData(this._searchText$.value);
     }
     
     private shouldIncludeItem(itemId: number): boolean {

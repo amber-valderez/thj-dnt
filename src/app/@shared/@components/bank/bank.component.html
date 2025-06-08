@@ -22,6 +22,12 @@
                 class="class-toggle-button">
                 {{ className }}
             </button>
+            <button
+                mat-raised-button
+                class="class-toggle-button unselected" 
+                (click)="resetClassFilter()">
+                Reset
+            </button>
         </div>
     </mat-card-content>
 </mat-card>
