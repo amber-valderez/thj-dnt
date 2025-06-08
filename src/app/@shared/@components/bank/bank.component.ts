@@ -56,7 +56,7 @@ export class BankComponent {
     
     public availableFilterableClasses = [
         ...this._allPlayerClasses
-    ].filter(ac => ac !== 'Unknown');
+    ].filter(ac => ac !== PlayerClass.Unknown);
     
     public toggleClass(playerClass: PlayerClass | null): void {
         const currentSelection = new Set(this._selectedClasses$.value);
