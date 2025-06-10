@@ -8,16 +8,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { BehaviorSubject, interval, Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, interval, Observable, Subscription, from } from 'rxjs';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, switchMap, take, tap } from 'rxjs/operators';
 import { getDisplayDeltaFromDate, itemIdToPlayerClassMap, spellIdToPlayerClassMap, outputFileToJson } from '@utils/index';
-import { BankCategory, getCategory, ItemQuality, ItemSlot, PlayerClass } from '@enums/index';
+import { BankCategory, getBaseItemId, getCategory, ItemQuality, ItemSlot, PlayerClass } from '@enums/index';
 import { ItemIdsByClass } from '@interfaces/itemIds-by-class.interface';
-import itemIdsByClassJson from '@assets/item-ids-by-class.json';
 import { ItemDisplayComponent } from '../item-count/item-display.component';
-
-const itemIdsByClass: ItemIdsByClass = itemIdsByClassJson;
 
 @Component({
     selector: 'ariza-bank',
@@ -41,6 +38,27 @@ const itemIdsByClass: ItemIdsByClass = itemIdsByClassJson;
 export class BankComponent {
     private _searchText$ = new BehaviorSubject<string | undefined>(undefined);
     private searchSubscription: Subscription | undefined;
+    private _filterableBankCategories: BankCategory[] = [BankCategory.Augs, BankCategory.Items];
+    private _itemIdsByClass: ItemIdsByClass = {
+        Bard: [],
+        Beastlord: [],
+        Berserker: [],
+        Cleric: [],
+        Druid: [],
+        Enchanter: [],
+        Magician: [],
+        Monk: [],
+        Necromancer: [],
+        Paladin: [],
+        Ranger: [],
+        Rogue: [],
+        Shadowknight: [],
+        Shaman: [],
+        Warrior: [],
+        Wizard: [],
+        All: []
+    };
+
     onSearchChange($event: Event) {
         const input = $event.target as HTMLInputElement;
         const inputValue = input.value.trim();
@@ -48,7 +66,19 @@ export class BankComponent {
         this._searchText$.next(value);
     }
 
+    onTabChange(index: number): void {
+        const bankData = this._bankData$.value;
+        const keys = Array.from(bankData.keys());
+        this.selectedTabKey = keys[index];
+    }
+
+    showClassFilter(): boolean {
+        return !!this.selectedTabKey && this._filterableBankCategories.includes(this.selectedTabKey);
+    }
+
     @Input() items: Observable<any[]> = new Observable<any[]>();
+
+    public selectedTabKey: BankCategory | undefined;
 
     //#region Class Filter
     private _selectedClasses$ = new BehaviorSubject<Set<PlayerClass>>(new Set());
@@ -81,17 +111,20 @@ export class BankComponent {
         this.initializeBankData(this._searchText$.value);
     }
 
-    private shouldIncludeItem(itemId: number): boolean {
+    private shouldIncludeItem(itemId: number, bankCategory: BankCategory): boolean {
+        if (!this._filterableBankCategories.includes(bankCategory)) {
+            return true;
+        }
         const selectedClasses = this._selectedClasses$.value;
         let shouldInclude = false;
         if (!selectedClasses.size) {
             shouldInclude = true;
-        } else if (itemIdsByClass['All']?.includes(itemId)) {
+        } else if (this._itemIdsByClass['All']?.includes(itemId)) {
             shouldInclude = true;
         } else {
             for (const className of selectedClasses) {
                 const classKey = className as keyof ItemIdsByClass;
-                if (itemIdsByClass[classKey]?.includes(itemId)) {
+                if (this._itemIdsByClass[classKey]?.includes(itemId)) {
                     shouldInclude = true;
                     break;
                 }
@@ -186,6 +219,9 @@ export class BankComponent {
         // Existing initialization code
         console.log('BankComponent initialized');
 
+        from(import('@assets/item-ids-by-class.json'))
+            .subscribe(json => this._itemIdsByClass = json);
+
         // Initialize our classMap
         this._classesMap$.next(
             new Map<BankCategory, PlayerClass[]>([
@@ -237,11 +273,12 @@ export class BankComponent {
                     // Remove the first 3 characters (dnt)
                     // Split on -, get the first index ('bank' vs 'craft')
                     const category = name.substring(3).split('-')[0];
+                    const categoryEnum = getCategory(category);
+                    
                     const processedData: BankEntry[] = outputFileToJson(data, filter, hasProcessedSharedBank)
-                        .filter((item) => this.shouldIncludeItem(item.id))
+                        .filter((item) => this.shouldIncludeItem(getBaseItemId(item.id), categoryEnum))
                         .sort((a, b) => a.name.localeCompare(b.name));
                     hasProcessedSharedBank = true;
-                    const categoryEnum = getCategory(category);
                     this._processData(processedData, categoryEnum);
                     bankData.set(categoryEnum, processedData);
                 });

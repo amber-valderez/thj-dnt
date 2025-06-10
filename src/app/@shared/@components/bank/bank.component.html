@@ -16,24 +16,26 @@
                 <mat-label>Search</mat-label>
                 <input matInput placeholder="Enter search term" (input)="onSearchChange($event)" />
             </mat-form-field>
-            <mat-card-title class="center-text">Class Filter</mat-card-title>
-            <div class="class-toggle-container">
-                <button
-                    mat-raised-button
-                    *ngFor="let className of availableFilterableClasses"
-                    [class.selected]="isClassSelected(className)"
-                    [class.unselected]="!isClassSelected(className)"
-                    (click)="toggleClass(className)"
-                    class="class-toggle-button"
-                >
-                    {{ className }}
-                </button>
-                <button mat-raised-button class="class-toggle-button unselected" (click)="resetClassFilter()">Reset</button>
+            <div *ngIf="showClassFilter()">
+                <mat-card-title class="center-text">Class Filter</mat-card-title>
+                <div class="class-toggle-container">
+                    <button
+                        mat-raised-button
+                        *ngFor="let className of availableFilterableClasses"
+                        [class.selected]="isClassSelected(className)"
+                        [class.unselected]="!isClassSelected(className)"
+                        (click)="toggleClass(className)"
+                        class="class-toggle-button"
+                    >
+                        {{ className }}
+                    </button>
+                    <button mat-raised-button class="class-toggle-button unselected" (click)="resetClassFilter()">Reset</button>
+                </div>
             </div>
         </mat-card-content>
     </mat-card>
 
-    <mat-tab-group animationDuration="0ms">
+    <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event.index)">
         <mat-tab *ngFor="let tab of bankData$ | async | keyvalue; trackBy: trackByTabKey">
             <ng-template mat-tab-label>
                 {{ tab.key | titlecase }}
