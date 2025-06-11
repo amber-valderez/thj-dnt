@@ -35,7 +35,7 @@
         </mat-card-content>
     </mat-card>
 
-    <mat-tab-group animationDuration="0ms" (selectedTabChange)="onTabChange($event.index)">
+    <mat-tab-group class="custom-tab-group" animationDuration="0ms" (selectedTabChange)="onTabChange($event.index)">
         <mat-tab *ngFor="let tab of bankData$ | async | keyvalue; trackBy: trackByTabKey">
             <ng-template mat-tab-label>
                 {{ tab.key | titlecase }}

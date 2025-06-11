@@ -34,6 +34,12 @@
     white-space: normal;
 }
 
+mat-card {
+  background: #20202a; // Or match your page background
+  color: #f5f5f5;
+  box-shadow: none; // Optional: removes card shadow for a flatter look
+}
+
 .bank-content {
     max-height: calc(100vh - 170px);
     overflow-y: auto;
@@ -64,11 +70,11 @@ mat-card-content a {
     transition: all 0.3s ease;
     
     &.selected {
-        background-color: #1976d2;
-        color: white;
+        background-color: #ffe066;
+        color: #666;
         
         &:hover {
-            background-color: #1565c0;
+            background-color: #ffe788;
         }
     }
     
@@ -110,6 +116,20 @@ mat-card-content a {
   z-index: 1000;
   opacity: 0.95;
   pointer-events: none; // so it doesn't block clicks
+}
+
+.custom-tab-group {
+  --mat-tab-header-active-label-text-color: #ffe066;   // Active tab label (e.g., yellow)
+  --mat-tab-header-inactive-label-text-color: #b0b0c3; // Inactive tab label (e.g., gray)
+  --mat-tab-header-hover-label-text-color: #ffe066;    // Hover color (match active for consistency)
+  --mat-tab-header-active-ripple-color: #ffe066;
+  --mat-tab-header-inactive-ripple-color: #b0b0c3;
+  --mat-tab-header-indicator-color: #ffe066;           // Indicator color
+  --mat-tab-header-active-focus-indicator-color: #ffe066;
+  --mat-tab-header-active-focus-label-text-color: #ffe066;
+  --mat-tab-header-active-hover-indicator-color: #ffe066;
+  --mat-tab-header-active-hover-label-text-color: #ffe066;
+  --mdc-tab-indicator-active-indicator-color: #ffe066; // Active tab indicator color
 }
 
 @media (max-width: 768px) {
