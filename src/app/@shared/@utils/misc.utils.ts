@@ -2,6 +2,14 @@ import { ItemIdToSlotMap } from '@data/item-id-to-slot.data';
 import { getBaseItemId, ItemQuality } from '@enums/item-quality.enum';
 import { BankEntry } from '@models/bank-entry.type';
 
+export const expectedBankFiles = [
+    'dntbank-inventory.txt',
+    'dntcraft-inventory.txt',
+    'dntepics-inventory.txt',
+    'dntspells-inventory.txt',
+    'dntaugs-inventory.txt',
+];
+
 export function outputFileToJson(rawData: string, filterByName: string | undefined, skipSharedSlots: boolean = true): BankEntry[] {
     // Split the raw data by new lines
     const lines = rawData.split('\n');
@@ -56,9 +64,9 @@ export function outputFileToJson(rawData: string, filterByName: string | undefin
                 const existingEntry = result.find((entry) => entry.baseId === baseId);
                 if (existingEntry) {
                     if (id >= ItemQuality.Legendary) {
-                        existingEntry.legendaryCount = count+(existingEntry.legendaryCount ?? 0);
+                        existingEntry.legendaryCount = count + (existingEntry.legendaryCount ?? 0);
                     } else if (id >= ItemQuality.Enchanted) {
-                        existingEntry.enchantedCount = count+(existingEntry.enchantedCount ?? 0);
+                        existingEntry.enchantedCount = count + (existingEntry.enchantedCount ?? 0);
                     } else {
                         existingEntry.baseCount += count;
                     }
@@ -70,8 +78,7 @@ export function outputFileToJson(rawData: string, filterByName: string | undefin
                 let normalizedName = name;
                 if (id >= ItemQuality.Legendary) {
                     normalizedName = name.replace(/\s*\(Legendary\)$/i, '').trim();
-                }
-                else if (id >= ItemQuality.Enchanted) {
+                } else if (id >= ItemQuality.Enchanted) {
                     normalizedName = name.replace(/\s*\(Enchanted\)$/i, '').trim();
                 }
 

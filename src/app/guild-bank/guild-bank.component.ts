@@ -3,7 +3,8 @@ import { Component, inject } from '@angular/core';
 import { collection, collectionData, Firestore, query, where } from '@angular/fire/firestore';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { BankComponent } from "@components/bank/bank.component";
+import { BankComponent } from '@components/bank/bank.component';
+import { expectedBankFiles } from '../@shared/@utils';
 
 @Component({
     selector: 'app-guild-bank',
@@ -20,13 +21,7 @@ export class GuildBankComponent {
         const _name = this.route.snapshot.paramMap.get('name');
         this._id$.next(_name);
         const itemCollection = collection(this.firestore, 'items');
-        const bankData = query(itemCollection, where('__name__', 'in', [
-            'dntbank-inventory.txt',
-            'dntcraft-inventory.txt',
-            'dntepics-inventory.txt',
-            'dntspells-inventory.txt',
-            'dntaugs-inventory.txt',
-        ]));
+        const bankData = query(itemCollection, where('__name__', 'in', expectedBankFiles));
         this.items = collectionData(bankData);
     }
 }

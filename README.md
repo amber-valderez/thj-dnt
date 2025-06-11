@@ -4,7 +4,7 @@ This repo contains a simple web app to read the the raw output `.txt` files and 
 
 We currently have 4 banker characters:
 1. Dntbank
-2. Dntdoze
+2. Dntaugs
 3. Dntepics
 4. Dntspells
 
@@ -18,18 +18,14 @@ More info on what goes where is posted on the DNT Discord server in the **#bank-
 4. Run the command `/output inventory outputs/Dntbank-Inventory.txt` # this filename must match exactly
 5. Rinse and repeat for each character, make sure to name the file appropriately.
 
-Once you have the 4 files you'll need to get them added to this repo.
+Once you have the 4 files you'll need to upload them.
 
-## Update This Repo
-1. Download GitHub Desktop
-2. Clone this repo (there is an option to open in GitHub Desktop if you click the green 'Code' button)
-3. In GitHub Desktop, create a branch, name it `YYYYMMDD` e.g. `20250107`
-4. Find the cloned directory
-5. Overwrite the files in `./src/assets`
-6. In Github Desktop, commit your changes
-7. Publish your branch
-8. Create a [new Pull Request](https://github.com/amber-valderez/thj-dnt/pulls) based off your branch
-9. GitHub Actions will deploy your changes
+## Update The Bank
+1. Visit https://thj-dnt.web.app/upload.
+2. Drag and drop all the files you want to update. There is no loading or progress.
+3. If the file does not match the accepted Bank Character, an error will be logged and the file will be ignored.
+4. Return to https://thj-dnt.web.app/bank and see the updates.
+5. Profit.
 
 ## Improvements
 * Move the files to S3 or GDrive, have GitHub Actions poll for changes every 5 minutes
