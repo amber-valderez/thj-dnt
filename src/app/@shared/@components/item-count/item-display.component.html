@@ -1,19 +1,21 @@
 <ng-container *ngIf="item; let itemDisplay">
     <h4 matLine>
         <ng-container *ngIf="itemDisplay.baseCount || itemDisplay.enchantedCount || itemDisplay.legendaryCount">
-            <a href="https://www.thjdi.cc/item/{{ itemDisplay.baseId + ItemQuality.Legendary }}" class="name-link" target="_blank">{{ itemDisplay.name }}</a>
-            <a href="https://www.thjdi.cc/item/{{ itemDisplay.baseId }}" *ngIf="itemDisplay.baseCount" class="green-text count-badge">{{
+            <a href="https://eqdb.net/item/detail/{{ itemDisplay.baseId + ItemQuality.Legendary }}" class="name-link" target="_blank">{{ itemDisplay.name }}</a>
+            <a href="https://eqdb.net/item/detail/{{ itemDisplay.baseId }}" *ngIf="itemDisplay.baseCount" class="green-text count-badge" target="_blank">{{
                 itemDisplay.baseCount
             }}</a
             ><a
-                href="https://www.thjdi.cc/item/{{ itemDisplay.baseId + ItemQuality.Enchanted }}"
+                href="https://eqdb.net/item/detail/{{ itemDisplay.baseId + ItemQuality.Enchanted }}"
                 *ngIf="itemDisplay.enchantedCount"
                 class="blue-text count-badge"
+                target="_blank"
                 >{{ itemDisplay.enchantedCount }}</a
             ><a
-                href="https://www.thjdi.cc/item/{{ itemDisplay.baseId + ItemQuality.Legendary }}"
+                href="https://eqdb.net/item/detail/{{ itemDisplay.baseId + ItemQuality.Legendary }}"
                 *ngIf="itemDisplay.legendaryCount"
                 class="gold-text count-badge"
+                target="_blank"
                 >{{ itemDisplay.legendaryCount }}</a
             >
         </ng-container>
