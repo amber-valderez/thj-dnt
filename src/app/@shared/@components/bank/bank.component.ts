@@ -38,7 +38,7 @@ import { ItemDisplayComponent } from '../item-count/item-display.component';
 export class BankComponent {
     private _searchText$ = new BehaviorSubject<string | undefined>(undefined);
     private searchSubscription: Subscription | undefined;
-    private _filterableBankCategories: BankCategory[] = [BankCategory.Augs, BankCategory.Items];
+    private _filterableBankCategories: BankCategory[] = [BankCategory.Items];
     private _itemIdsByClass: ItemIdsByClass = {
         Bard: [],
         Beastlord: [],
