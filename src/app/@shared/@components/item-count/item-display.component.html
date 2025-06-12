@@ -1,7 +1,7 @@
 <ng-container *ngIf="item; let itemDisplay">
     <h4 matLine>
         <ng-container *ngIf="itemDisplay.baseCount || itemDisplay.enchantedCount || itemDisplay.legendaryCount">
-            <a href="https://eqdb.net/item/detail/{{ itemDisplay.baseId + ItemQuality.Legendary }}" class="name-link" target="_blank">{{ itemDisplay.name }}</a>
+            <a href="https://eqdb.net/item/detail/{{ itemDisplay.baseId }}" class="name-link" target="_blank">{{ itemDisplay.name }}</a>
             <a href="https://eqdb.net/item/detail/{{ itemDisplay.baseId }}" *ngIf="itemDisplay.baseCount" class="green-text count-badge" target="_blank">{{
                 itemDisplay.baseCount
             }}</a
