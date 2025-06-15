@@ -8,11 +8,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { BehaviorSubject, interval, Observable, Subscription, from } from 'rxjs';
+import { BehaviorSubject, interval, Observable, Subscription, from, combineLatest } from 'rxjs';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, switchMap, take, tap } from 'rxjs/operators';
-import { getDisplayDeltaFromDate, itemIdToPlayerClassMap, spellIdToPlayerClassMap, outputFileToJson } from '@utils/index';
-import { BankCategory, getBaseItemId, getCategory, ItemQuality, ItemSlot, PlayerClass } from '@enums/index';
+import { debounceTime, distinctUntilChanged, map, switchMap, take, tap } from 'rxjs/operators';
+import { getDisplayDeltaFromDate, itemIdToPlayerClassMap, spellIdToPlayerClassMap, outputFileToJson, augSources} from '@utils/index';
+import { BankCategory, getCategory, ItemSlot, PlayerClass, AugSource, getBaseItemId } from '@enums/index';
 import { ItemIdsByClass } from '@interfaces/itemIds-by-class.interface';
 import { ItemDisplayComponent } from '../item-count/item-display.component';
 
@@ -157,8 +157,7 @@ export class BankComponent {
     public BankCategory = BankCategory;
     public PlayerClass = PlayerClass;
     public ItemSlot = ItemSlot;
-
-    public ItemQuality = ItemQuality;
+    public AugSource = AugSource;
     //#endregion
 
     public Object = Object;
@@ -171,7 +170,46 @@ export class BankComponent {
     public classesMap$: Observable<Map<BankCategory, PlayerClass[]>> = this._classesMap$.asObservable();
 
     private _playerClasses: PlayerClass[] = Object.values(PlayerClass).filter((value) => typeof value === 'string') as PlayerClass[];
+    
+    // Aug Source related properties
+    public _augSourceMap$: BehaviorSubject<Map<BankCategory, AugSource[]>> = new BehaviorSubject<Map<BankCategory, AugSource[]>>(
+        new Map<BankCategory, AugSource[]>()
+    );
+    public augSourceMap$: Observable<Map<BankCategory, AugSource[]>> = this._augSourceMap$.asObservable(); 
+    private _augSources$: BehaviorSubject<AugSource[]> = new BehaviorSubject<AugSource[]>([]);
+    public augSources$: Observable<AugSource[]> = this._augSources$.asObservable();
+    private _augSourceBankEntryMap$ = new BehaviorSubject<Map<AugSource, BankEntry[]>>(new Map<AugSource, BankEntry[]>());
+    public augSourceBankEntryMap$ = this._augSourceBankEntryMap$.asObservable();
 
+    // Add this computed observable for easier template binding
+    public augSourceItems$ = combineLatest([
+        this.augSources$,
+        this.augSourceBankEntryMap$
+    ]).pipe(
+        map(([sources, sourceMap]) => 
+            sources.map(source => ({
+                source,
+                items: sourceMap.get(source) || []
+            }))
+        )
+    );
+
+    private getAugSourceFromItem(item: BankEntry): AugSource {
+    const itemId = item.id.toString();
+
+  
+    for (const mapping of augSources.sourceMappings) {
+        if (mapping.ids.some(idFromList => itemId.includes(idFromList.toString()))) {
+            return mapping.source;
+        }
+    }
+
+    return AugSource.Other;
+}
+    // Helper method for template
+    public getItemsForSource(source: AugSource, map: Map<AugSource, BankEntry[]> | null): BankEntry[] {
+        return map?.get(source) || [];
+    }
     public getClasses(category: BankCategory): PlayerClass[] {
         let playerClasses = this._playerClasses;
         if (category !== BankCategory.Epics) {
@@ -201,6 +239,8 @@ export class BankComponent {
                 ItemSlot[a].localeCompare(ItemSlot[b])
             )
         );
+
+        this._augSources$.next(Object.values(AugSource));
         this._classCategoryDataToBankEntryMap = new Map<BankCategory, Map<PlayerClass | ItemSlot, Array<BankEntry>>>();
     };
     ngOnDestroy(): void {
@@ -360,6 +400,38 @@ export class BankComponent {
                 }
             });
             this._classCategoryDataToBankEntryMap$.next(this._classCategoryDataToBankEntryMap);
+        
+        } else if (category === BankCategory.Augs) {
+
+            const augSources = Object.values(AugSource);           
+            const augSourceBankEntryMap: Map<AugSource, BankEntry[]> = new Map<AugSource, BankEntry[]>();
+            
+            augSources.forEach(source => {
+                augSourceBankEntryMap.set(source, []);
+            });
+            
+            processedData.forEach((bankEntry) => {
+                const augSource = this.getAugSourceFromItem(bankEntry);
+                const existingEntries = augSourceBankEntryMap.get(augSource) || [];
+                const existingEntry = existingEntries.find((existingEntry) => existingEntry.id === bankEntry.id);
+
+                if (existingEntry) {
+                    existingEntry.baseCount += bankEntry.baseCount;
+                } else {
+                    existingEntries.push(bankEntry);
+                }
+
+                augSourceBankEntryMap.set(augSource, existingEntries);
+            });
+
+            // Filter out empty sources and update observables
+            const filteredSources = augSources.filter(source =>
+                augSourceBankEntryMap.get(source)?.length! > 0
+            );
+
+            this._augSources$.next(filteredSources);
+            this._augSourceBankEntryMap$.next(augSourceBankEntryMap);
+            
         }
     }
     

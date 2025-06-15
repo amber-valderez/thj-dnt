@@ -9,4 +9,5 @@ export type BankEntry = {
     baseId: number;
     // This can be multiple slots, so we are using a bitmask to represent it
     itemSlot: number;
+    augSource?: string;
 }
