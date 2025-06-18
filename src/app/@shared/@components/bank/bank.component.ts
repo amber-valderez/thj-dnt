@@ -199,8 +199,7 @@ export class BankComponent {
 //const itemId = item.id.toString();
   
     for (const mapping of augSources.sourceMappings) {
-        //if (mapping.ids.some(idFromList => itemId.includes(idFromList.toString()))) {
-        if (mapping.ids.includes(itemId)) {
+        if (mapping.ids.includes(getBaseItemId(itemId))) {
             return mapping.source;
         }
     }
