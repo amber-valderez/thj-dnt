@@ -425,4 +425,5 @@ export const PaladinSpells = [
     124961,
     16623,
     30411, // Improved Invis vs Undead
+    26941, // Spell: Crusaders Touch
   ];
