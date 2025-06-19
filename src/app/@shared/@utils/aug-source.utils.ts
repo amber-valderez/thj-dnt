@@ -4,7 +4,7 @@ export const everQuestAugIds = [
 51889,   //  Ball of Primeval Lava
 51903,   //  Compressed Froglok Bile
 51907,   //  Froglok Egg Capsule
-51904    //  Singed Goblin Eye
+51904,   //  Singed Goblin Eye
 
 ];
 export const kunarkAugIds = [
@@ -12,7 +12,7 @@ export const kunarkAugIds = [
 51906,   //  Decomposing Scroll of Lore
 51908,   //  Enchanted Werebone
 51891,   //  Pilgrim's Protector
-46181    //  Suspended Wurm Blood
+46181,   //  Suspended Wurm Blood
 
 ];
 export const veliousAugIds = [
@@ -21,29 +21,29 @@ export const veliousAugIds = [
 
 ];
 export const luclinAugIds = [
-51910    //  Snakeskin Gem
+51910,   //  Snakeskin Gem
 
 ];
 export const planesAugIds = [
 51912,   //  Diaku Armor Fragment
 51911,   //  Frozen Ball Lightning
-51923    //  Lump of Pus
+51923,   //  Lump of Pus
 
 ];
 export const bazaarAugIds = [
 51716,   //  Dioptase Gem
 51721,   //  Erythrite Gem
 51726,   //  Wulfenite Gem
-51731    //  Anatase Gem
+51731,   //  Anatase Gem
 
 ];
 export const tradeskillAugIds = [
-17730    //  Prismatic Scale of the Elements
+17730,   //  Prismatic Scale of the Elements
 
 ];
 export const ykeshaAugIds = [
 51892,   //  Brigand's Sunken Treasure
-51909    //  Rune of Abominable Rituals
+51909,   //  Rune of Abominable Rituals
 
 ];
 export const veeshanAugIds = [
@@ -69,7 +69,7 @@ export const veeshanAugIds = [
 69458,   //  Enchanted Orb of Burning Spikes
 69459,   //  Gemstone of Enhanced Health
 69460,   //  Orb of Gathered Power
-69461    //  Bloodstone of Armored Protection
+69461,   //  Bloodstone of Armored Protection
 
 ];
 export const seruAugIds = [
@@ -84,7 +84,7 @@ export const seruAugIds = [
 9544,   //  Healing Fragment of Truth
 9545,   //  Hastened Fragment of Truth
 9547,   //  Gelid Fragment of Truth
-9548    //  Replenishing Fragment of Truth
+9548,   //  Replenishing Fragment of Truth
 
 ];
 export const sleeperAugIds = [
@@ -102,7 +102,7 @@ export const sleeperAugIds = [
 9609,   //  Prismatic Scale of Range
 9610,   //  Prismatic Scale of Hastened Casting
 9611,   //  Prismatic Scale of Preservation
-9612    //  Prismatic Scale of Faerune
+9612,   //  Prismatic Scale of Faerune
 
 ];
 export const zebAugIds = [
@@ -117,7 +117,7 @@ export const zebAugIds = [
 18377,   //  Lyrical Splinter of Time
 18639,   //  Howling Splinter of Time
 19053,   //  Runic Splinter of Time
-24130    //  Corrupted Splinter of Time
+24130,    //  Corrupted Splinter of Time
 
 ];
 export const holidayAugIds = [
@@ -125,7 +125,7 @@ export const holidayAugIds = [
 24134,   //  Egg of Armored Protection
 24135,   //  Egg of Abominable Rituals
 24136,   //  Frozen Egg of Stamina
-24137   //  Flawless Egg of Deftness
+24137,   //  Flawless Egg of Deftness
 
 ];
 export const otherAugIds = [
