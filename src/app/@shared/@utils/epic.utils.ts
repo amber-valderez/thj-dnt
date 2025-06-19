@@ -80,6 +80,10 @@ export const beastlordEpicItemIds: Array<number> = [
 
     8495, // Claw of the Savage Spirit (primary, epic 1.0)
     8496, // Claw of the Savage Spirit (secondary, epic 1.0)
+
+    // Epic 1.5
+    57995, // Disturbed Beast Essence
+
 ];
 
 export const berserkerEpicItemIds = [
@@ -88,6 +92,8 @@ export const berserkerEpicItemIds = [
     60207, // Gnashing Kobold Paw
     60208, // Scent Gland
     60200, // Treanik's Tarnished Axe
+    96467, // Philter of Major Translocation
+
 
     68299, // Kerasian Axe of Ire (epic 1.0)
 ];
@@ -225,6 +231,8 @@ export const monkEpicItemIds = [
     12979, // Metal Pipe (Karnor's Castle)
 
     10652, // Celestial Fists (epic 1.0)
+
+    48113, // Symbol of Order
 ];
 
 export const necromancerEpicItemIds = [
@@ -279,7 +287,13 @@ export const shadowknightEpicItemIds = [
     11609, // Soul Leech, Dark Sword of Blood
     5403, // Ghoulbane
     14365, // Cough Elixir
+    3140, // Darkforge Helm
     3141, // Darkforge Breastplate
+    3145, // Darkforge Greaves
+    12294, // Decayed Left Legplate
+    12293, // Decayed Right Legplate
+    14382, // Dusty Tome
+
 
     14383, // Innoruuk's Curse (epic 1.0)
 
@@ -318,6 +332,10 @@ export const wizardEpicItemIds = [
     14319, // Golem Sprocket
     14335, // Arantir's Ring
     14341, // Staff of the Four (epic 1.0)
+
+    //Epic 1.5
+    11474, // Fluxing Rune
+
 
 ];
 
