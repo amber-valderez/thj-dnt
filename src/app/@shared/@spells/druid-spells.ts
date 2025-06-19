@@ -911,8 +911,9 @@ export const DruidSpells = [
     19502,
     26970,
     16623,
-    17728,
+    17728, // Spell: Aspect of the Reptile
     26609, // Ancient: Legacy of Blades
     26610, // Ancient: Starfire of Ro
     19246, // Tunare`s Request
+    28532, // Spell: E'ci's Frosty Breath
   ]
