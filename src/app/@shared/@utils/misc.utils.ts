@@ -25,6 +25,34 @@ export function outputFileToJson(rawData: string, filterByName: string | undefin
         18756, // Tattered Note
         976012, // Large Bank Box,
         17138, // Grandmaster's Carry-All
+        500020, // Hero's Box of Holding (Red)
+        500022, // Hero's Box of Holding (Yellow)
+        500023, // Hero's Box of Holding (Green)
+        500021, // Hero's Box of Holding (Orange)
+        500024, // Hero's Box of Holding (Blue)
+        500025, // Hero's Box of Holding (Purple)
+        500026, // Hero's Box of Holding (White)
+        500027, // Hero's Box of Holding (Black)
+        500028, // Hero's Box of Holding
+        500029, // Hero's Box of Holding (Not a Mimic)
+        500030, // Bag of Bartering
+        500031, // Belt Pouches of Bartering
+        17899, // Trader's Satchel
+        2001800, // Decanter of Endless Hot Chocolate (Legendary)
+        56051, // Platter of Endless Turkey
+        4039, // Platter of Endless Cookies
+        500010, // Hero's Rucksack
+        500011, // Hero's Rucksack (Black)
+        500012, // Hero's Rucksack (Red)
+        500013, // Hero's Rucksack (White)
+        500014, // Hero's Rucksack (Orange)
+        500015, // Hero's Rucksack (Yellow)
+        500016, // Hero's Rucksack (Green)
+        500017, // Hero's Rucksack (Light Blue)
+        500018, // Hero's Rucksack (Blue)
+        500019, // Hero's Rucksack (Purple)
+        9246, // Grandmaster Tailor's Needle
+        
     ];
 
     const blacklistedItemLocations = ['Primary', 'Secondary', 'Chest'];
