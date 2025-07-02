@@ -286,42 +286,54 @@ export class BankComponent {
     }
 
     public initializeBankData(filter: string | undefined = undefined): void {
-        // Initialize our bankData$
-        let hasProcessedSharedBank = false;
-        this.items
-            .pipe(
-                take(1),
-                tap(() => {
-                    this._isLoading$.next(false);
-                })
-            )
-            .subscribe((rawData) => {
-                this._classCategoryDataToBankEntryMap.clear();
-                const bankData = new Map<BankCategory, BankEntry[]>();
+    // Initialize our bankData$
+    let hasProcessedSharedBank = false;
+    this.items
+        .pipe(
+            take(1),
+            tap(() => {
+                this._isLoading$.next(false);
+            })
+        )
+        .subscribe((rawData) => {
+            this._classCategoryDataToBankEntryMap.clear();
+            const bankData = new Map<BankCategory, BankEntry[]>();
 
-                rawData.forEach((itemPayload) => {
-                    const name = itemPayload.name;
-                    const data = itemPayload.data;
-                    const rawDate = itemPayload.date;
-                    const date = rawDate ? new Date(rawDate) : null;
-                    if (date && (!this.lastModified || this.lastModified < date)) {
-                        this.lastModified = date;
-                    }
-                    // Remove the first 3 characters (dnt)
-                    // Split on -, get the first index ('bank' vs 'craft')
-                    const category = name.substring(3).split('-')[0];
-                    const categoryEnum = getCategory(category);
-                    
-                    const processedData: BankEntry[] = outputFileToJson(data, filter, hasProcessedSharedBank)
-                        .filter((item) => this.shouldIncludeItem(getBaseItemId(item.id), categoryEnum))
-                        .sort((a, b) => a.name.localeCompare(b.name));
+            rawData.forEach((itemPayload) => {
+                const name = itemPayload.name;
+                const data = itemPayload.data;
+                const rawDate = itemPayload.date;
+                const date = rawDate ? new Date(rawDate) : null;
+                if (date && (!this.lastModified || this.lastModified < date)) {
+                    this.lastModified = date;
+                }
+                // Remove the first 3 characters (dnt)
+                // Split on -, get the first index ('bank' vs 'craft')
+                const category = name.substring(3).split('-')[0];
+                const categoryEnum = getCategory(category);
+                
+                // Only include shared bank for specific categories (NOT Augs)
+                const shouldIncludeSharedBank = ![BankCategory.Augs, BankCategory.Spells, BankCategory.Craft, BankCategory.Epics].includes(categoryEnum);
+                
+                const processedData: BankEntry[] = outputFileToJson(
+                    data, 
+                    filter, 
+                    hasProcessedSharedBank || !shouldIncludeSharedBank
+                )
+                    .filter((item) => this.shouldIncludeItem(getBaseItemId(item.id), categoryEnum))
+                    .sort((a, b) => a.name.localeCompare(b.name));
+                
+                // Only set the flag if we actually processed shared bank items for this category
+                if (shouldIncludeSharedBank) {
                     hasProcessedSharedBank = true;
-                    this._processData(processedData, categoryEnum);
-                    bankData.set(categoryEnum, processedData);
-                });
-                this._bankData$.next(bankData);
+                }
+                
+                this._processData(processedData, categoryEnum);
+                bankData.set(categoryEnum, processedData);
             });
-    }
+            this._bankData$.next(bankData);
+        });
+}
 
     private _classCategoryDataToBankEntryMap$: BehaviorSubject<Map<BankCategory, Map<PlayerClass | ItemSlot, Array<BankEntry>>>> =
         new BehaviorSubject<Map<BankCategory, Map<PlayerClass | ItemSlot, Array<BankEntry>>>>(

@@ -6,6 +6,12 @@
   color: #ddd;
   text-decoration-line: none;
   margin-left: 3px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 .blue-text {
   color: rgb(35, 116, 255)
